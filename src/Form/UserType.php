@@ -15,12 +15,8 @@ class UserType extends AbstractType
             ->add('name')
             ->add('lastname')
             ->add('email')
-            ->add('string')
+            ->add('password')
             ->add('role')
-            ->add('remember_token')
-            ->add('email_verified_at', null, [
-                'widget' => 'single_text',
-            ])
         ;
     }
 

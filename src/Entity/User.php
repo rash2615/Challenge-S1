@@ -15,17 +15,17 @@ class User
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 150)]
+    #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $string = null;
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
 
     #[ORM\Column(length: 50)]
     private ?string $role = null;
@@ -77,16 +77,21 @@ class User
         return $this;
     }
 
-    public function getString(): ?string
+    public function getPassword(): ?string
     {
-        return $this->string;
+        return $this->password;
     }
 
-    public function setString(string $string): static
+    public function setPassword(string $password): static
     {
-        $this->string = $string;
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
 
         return $this;
+    }
+
+    public function verifyPassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
     }
 
     public function getRole(): ?string
