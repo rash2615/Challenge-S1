@@ -1,0 +1,64 @@
+{# templates/register/index.html.twig #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Luxar</title>
+    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="container mx-auto flex justify-between items-center py-6 px-4 md:px-6">
+            <div class="text-lg font-bold">Luxar</div>
+            <nav class="flex space-x-4">
+                <a href="/" class="text-blue-500 hover:underline">Accueil</a>
+                <a href="/login" class="text-blue-500 hover:underline">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-10 px-4 md:px-6">
+        <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold text-center mb-6">Inscription</h1>
+            <div class="flex justify-center items-center mb-8">
+                <div class="w-1/2">
+                    <div class="w-full rounded-full bg-gray-300">
+                        <div class="w-1/2 bg-blue-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'register/step1.html.twig' %}
+
+            <div class="flex items-center justify-between mt-6">
+                <button type="button" onclick="prevStep(1)" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-400">Précédent</button>
+                <button type="submit" onclick="nextStep(2)" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600">Suivant</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-16 py-6">
+        <div class="container mx-auto text-center">
+            <p class="text-gray-700">&copy; 2024 Luxar. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript pour gérer la navigation entre les étapes avec redirection
+        function nextStep(step) {
+            // Mettre à jour l'URL avec le numéro de l'étape suivante
+            window.location.href = "/register/step2";
+        }
+
+        function prevStep(step) {
+            // Mettre à jour l'URL avec le numéro de l'étape précédente
+            window.location.href = "/register/step1";
+        }
+    </script>
+</body>
+</html>
