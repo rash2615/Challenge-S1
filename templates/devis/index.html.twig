@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis index{% endblock %}
+
+{% block body %}
+    <h1>Devis index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Customer_id</th>
+                <th>Chrono</th>
+                <th>Status</th>
+                <th>Validity_date</th>
+                <th>Created_at</th>
+                <th>Work_start_date</th>
+                <th>Work_duration</th>
+                <th>Payment_deadline</th>
+                <th>Payment_delay_rate</th>
+                <th>Tva_applicable</th>
+                <th>Sent_at</th>
+                <th>Signed_at</th>
+                <th>Is_draft</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for devi in devis %}
+            <tr>
+                <td>{{ devi.id }}</td>
+                <td>{{ devi.customerId }}</td>
+                <td>{{ devi.chrono }}</td>
+                <td>{{ devi.status }}</td>
+                <td>{{ devi.validityDate ? devi.validityDate|date('Y-m-d') : '' }}</td>
+                <td>{{ devi.createdAt ? devi.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.workStartDate ? devi.workStartDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.workDuration }}</td>
+                <td>{{ devi.paymentDeadline ? devi.paymentDeadline|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.paymentDelayRate }}</td>
+                <td>{{ devi.tvaApplicable ? 'Yes' : 'No' }}</td>
+                <td>{{ devi.sentAt ? devi.sentAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.signedAt ? devi.signedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ devi.isDraft ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_devis_show', {'id': devi.id}) }}">show</a>
+                    <a href="{{ path('app_devis_edit', {'id': devi.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="15">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_devis_new') }}">Create new</a>
+{% endblock %}
