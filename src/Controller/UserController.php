@@ -22,6 +22,47 @@ class UserController extends AbstractController
         ]);
     }
 
+    // /users/{id}/confirm_account
+    #[Route('/{id}/confirm_account', name: 'app_user_confirm_account', methods: ['GET'])]
+    public function confirmAccount(User $user, Request $request): Response|\Exception
+    {
+        dd($user);
+        // $bodyContent = json_decode($request->getContent(), true);
+
+        // // ERROR: No token provided as body parameter
+        // if (empty($bodyContent) || !array_key_exists('token', $bodyContent)) {
+        //     throw new BadRequestException("Le token est manquant dans les paramètres POST de la requête.");
+        // }
+
+        // // ERROR: Account already confirmed
+        // if (!is_null($data->getConfirmedAt())) {
+        //     if (!is_null($data->getConfirmationToken())) {
+        //         $data->setConfirmationToken(null);
+        //         $this->entityManager->persist($data);
+        //         $this->entityManager->flush();
+        //     }
+
+        //     throw new CustomUserMessageAccountStatusException("Votre compte est déjà confirmé.");
+        // }
+
+        // // ERROR: Token provided as body parameter do not match with the User's confirmation token
+        // if ($data->getConfirmationToken() !== $bodyContent['token']) {
+        //     throw new BadRequestException("Token invalide.");
+        // }
+
+        // // SUCCESS
+        // $data->setConfirmationToken(null);
+        // $data->setConfirmedAt(new DateTime());
+
+        // $this->entityManager->persist($data);
+        // $this->entityManager->flush();
+
+        // return new JsonResponse(
+        //     ['code' => Response::HTTP_OK, 'message' => "Votre compte a été confirmé avec succès."],
+        //     Response::HTTP_OK
+        // );
+    }
+
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {

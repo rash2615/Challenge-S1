@@ -125,6 +125,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Type(DateTimeInterface::class)]
     private ?DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column]
+    private bool $isVerified = false;
+
     // #[ORM\OneToMany(targetEntity: Customer::class, mappedBy: "owner", orphanRemoval: true, cascade: ["persist"])]
     // private Collection $customers;
 
@@ -183,16 +186,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password): static
     {
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
 
         return $this;
+    }
+
+    public function verifyPassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
     }
 
     /**
@@ -406,5 +414,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function updateTimestamp(): void
     {
         $this->setUpdatedAt(new DateTime());
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 }

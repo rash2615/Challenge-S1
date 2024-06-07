@@ -22,12 +22,12 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
+                <td>{{ user.firstname }}</td>
                 <td>{{ user.lastname }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.roles|join(', ') }}</td>
-                <td>{{ user.rememberToken ? 'Yes' : 'No' }}</td>
-                <td>{{ user.emailVerifiedAt ? user.emailVerifiedAt|date('Y-m-d') : '' }}</td>
+                {# <td>{{ user.rememberToken ? 'Yes' : 'No' }}</td> #}
+                {# <td>{{ user.emailVerifiedAt ? user.emailVerifiedAt|date('Y-m-d') : '' }}</td> #}
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
