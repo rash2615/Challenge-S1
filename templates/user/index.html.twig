@@ -12,8 +12,7 @@
                 <th>Name</th>
                 <th>Lastname</th>
                 <th>Email</th>
-                <th>String</th>
-                <th>Role</th>
+                <th>Roles</th>
                 <th>Remember_token</th>
                 <th>Email_verified_at</th>
                 <th>actions</th>
@@ -26,8 +25,7 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.lastname }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.role }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
                 <td>{{ user.rememberToken ? 'Yes' : 'No' }}</td>
                 <td>{{ user.emailVerifiedAt ? user.emailVerifiedAt|date('Y-m-d') : '' }}</td>
                 <td>
