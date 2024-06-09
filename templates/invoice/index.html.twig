@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invoice index{% endblock %}
+
+{% block body %}
+    <h1>Invoice index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Customer_id</th>
+                <th>Status</th>
+                <th>Sent_at</th>
+                <th>Paid_at</th>
+                <th>Chrono</th>
+                <th>Tva_applicable</th>
+                <th>Created_at</th>
+                <th>Service_done_at</th>
+                <th>Payment_deadline</th>
+                <th>Payment_delay_rate</th>
+                <th>Is_draft</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.id }}</td>
+                <td>{{ invoice.customerId }}</td>
+                <td>{{ invoice.status }}</td>
+                <td>{{ invoice.sentAt ? invoice.sentAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ invoice.paidAt ? invoice.paidAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ invoice.chrono }}</td>
+                <td>{{ invoice.tvaApplicable ? 'Yes' : 'No' }}</td>
+                <td>{{ invoice.createdAt ? invoice.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ invoice.serviceDoneAt ? invoice.serviceDoneAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ invoice.paymentDeadline ? invoice.paymentDeadline|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ invoice.paymentDelayRate }}</td>
+                <td>{{ invoice.isDraft ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}">show</a>
+                    <a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="13">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_invoice_new') }}">Create new</a>
+{% endblock %}
