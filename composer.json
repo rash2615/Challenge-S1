@@ -44,6 +44,8 @@
         "symfony/web-link": "^7.1",
         "symfony/yaml": "^7.1",
         "symfonycasts/verify-email-bundle": "^1.17",
+        "symfony/security-bundle": "7.0.*",
+        "symfony/webpack-encore-bundle": "^2.1",
         "twig/extra-bundle": "3.*",
         "twig/twig": "3.*"
     },
