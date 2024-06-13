@@ -55,8 +55,11 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
+        // return $this->render('registration/register.html.twig', [
+        //     'registrationForm' => $form
+        // ]);
+        return $this->render('register/index.html.twig', [
+            'registrationForm' => $form
         ]);
     }
 

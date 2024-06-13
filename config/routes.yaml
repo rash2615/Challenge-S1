@@ -1,20 +1,5 @@
-app_home:
-    path: /
-    controller: App\Controller\HomeController::index
-
-app_login:
-    path: /login
-    controller: App\Controller\LoginController::login
-
-register:
-    path: /register
-    controller: App\Controller\RegisterController::register
-
-
-step1:
-    path: /register/step1
-    controller: App\Controller\RegisterController::step1
-
-step2:
-    path: /register/step2
-    controller: App\Controller\RegisterController::step2
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute

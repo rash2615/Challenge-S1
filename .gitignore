@@ -24,6 +24,9 @@ vendor/*
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
-npm-debug.log
-yarn-error.log
+package-lock.json
+.log
 ###< symfony/webpack-encore-bundle ###
+
+# Ignore Composer's lock
+.lock
