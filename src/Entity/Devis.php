@@ -2,70 +2,250 @@
 
 namespace App\Entity;
 
+// use ApiPlatform\Core\Annotation\ApiFilter;
+// use ApiPlatform\Core\Annotation\ApiResource;
+// use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+// use App\Controller\CreateUpdateInvoiceDevis;
 use App\Repository\DevisRepository;
-use Doctrine\DBAL\Types\Types;
+use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DevisRepository::class)]
+// #[
+//     ApiResource(
+//         collectionOperations: [
+//             'get' => [
+//                 'normalization_context' => ['groups' => ['allDevis:read']],
+//             ],
+//             'post' => ['controller' => CreateUpdateInvoiceDevis::class],
+//         ],
+//         itemOperations: [
+//             'get' => ['security' => 'object.getCustomer().getOwner() == user'],
+//             'put' => [
+//                 'security' => 'object.getCustomer().getOwner() == user',
+//                 'denormalization_context' => ['groups' => ['devis:update']],
+//                 'controller' => CreateUpdateInvoiceDevis::class,
+//             ],
+//             'delete' => ['security' => 'object.getCustomer().getOwner() == user'],
+//         ],
+//         subresourceOperations: [
+//             'api_customers_devis_get_subresource' => [
+//                 'security' => "is_granted('GET_SUBRESOURCE', _api_normalization_context['subresource_resources'])",
+//                 'normalization_context' => ['groups' => ['customers_devis_subresource']],
+//             ],
+//         ],
+//         denormalizationContext: ['groups' => ['devis:write', 'devis:service_write']],
+//         normalizationContext: ['groups' => ['devis:read', 'devis:service_read']],
+//         paginationClientItemsPerPage: true,
+//         paginationMaximumItemsPerPage: 500
+//     )
+// ]
+// #[ApiFilter(OrderFilter::class, properties: ["createdAt" => "desc"], arguments: ["orderParameterName" => "order"])]
 class Devis
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
+    #[ORM\Column(type: "integer")]
+    #[Groups([
+        'devis:read',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private int $id;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $customer_id = null;
+    #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: "devis")]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'allDevis:read'
+    ])]
+    private ?Customer $customer = null;
 
-    #[ORM\Column(type: Types::STRING, length: 13)]
-    private ?string $chrono = null;
+    #[ORM\Column(type: "string", length: 13)]
+    #[Assert\Regex(
+        pattern: "/^D-(\d{4})-(\d{6})$/",
+        message: "Le chrono n'est pas au format valide (exemple: D-2021-0001)."
+    )]
+    #[Groups([
+        'devis:read',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private string $chrono;
 
-    #[ORM\Column(type: Types::STRING, length: 10)]
-    private ?string $status = null;
+    #[ORM\Column(type: "string", length: 10)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(
+        choices: ['NEW', 'SENT', 'SIGNED', 'CANCELLED'],
+        message: "Le statut doit être de type 'NEW', 'SENT', 'SIGNED' ou 'CANCELLED'."
+    )]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private string $status;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $validity_date = null;
+    #[ORM\Column(type: "datetime")]
+    #[Assert\NotBlank]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private DateTimeInterface $validityDate;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(type: "datetime")]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $work_start_date = null;
+    #[ORM\Column(type: "datetime")]
+    #[Assert\NotBlank]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private DateTimeInterface $workStartDate;
 
-    #[ORM\Column(type: Types::STRING, length: 50)]
-    private ?string $work_duration = null;
+    #[ORM\Column(type: "string", length: 50)]
+    #[Assert\NotBlank]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private string $workDuration;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $payment_deadline = null;
+    #[ORM\Column(type: "datetime")]
+    #[Assert\NotBlank]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private DateTimeInterface $paymentDeadline;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $payment_delay_rate = null;
+    #[ORM\Column(type: "integer", nullable: true)]
+    #[Assert\NotBlank(allowNull: true)]
+    #[Assert\Range(
+        notInRangeMessage: "Le taux des pénalités de retard ou d'absence de paiement doit être
+        un pourcentage compris entre {{ min }} et {{ max }}.",
+        min: 0,
+        max: 100
+    )]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private ?int $paymentDelayRate = null;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private ?bool $tva_applicable = null;
+    #[ORM\Column(type: "boolean")]
+    #[Assert\NotNull]
+    #[Assert\Type('boolean')]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private bool $tvaApplicable;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $sent_at = null;
+    #[ORM\Column(type: "boolean")]
+    #[Assert\NotNull]
+    #[Assert\Type('boolean')]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private bool $isDraft;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $signed_at = null;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private ?DateTimeInterface $sentAt = null;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private ?bool $is_draft = null;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\Type(DateTimeInterface::class)]
+    #[Groups([
+        'devis:read',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private ?DateTimeInterface $signedAt = null;
+
+    #[ORM\OneToMany(
+        mappedBy: "devis",
+        targetEntity: InvoiceService::class,
+        cascade: ["persist", "remove"],
+        orphanRemoval: true
+    )]
+    #[Groups([
+        'devis:read',
+        'devis:write',
+        'devis:update',
+        'customers_devis_subresource',
+        'allDevis:read'
+    ])]
+    private Collection $services;
+
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->services = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCustomerId(): ?int
+    public function getCustomer(): ?Customer
     {
-        return $this->customer_id;
+        return $this->customer;
     }
 
-    public function setCustomerId(int $customer_id): static
+    public function setCustomer(?Customer $customer): self
     {
-        $this->customer_id = $customer_id;
+        $this->customer = $customer;
 
         return $this;
     }
@@ -75,7 +255,7 @@ class Devis
         return $this->chrono;
     }
 
-    public function setChrono(string $chrono): static
+    public function setChrono(string $chrono): self
     {
         $this->chrono = $chrono;
 
@@ -87,129 +267,159 @@ class Devis
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(string $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    public function getValidityDate(): ?\DateTimeInterface
+    public function getValidityDate(): ?DateTimeInterface
     {
-        return $this->validity_date;
+        return $this->validityDate;
     }
 
-    public function setValidityDate(\DateTimeInterface $validity_date): static
+    public function setValidityDate(DateTimeInterface $validityDate): self
     {
-        $this->validity_date = $validity_date;
+        $this->validityDate = $validityDate;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): static
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getWorkStartDate(): ?\DateTimeInterface
+    public function getWorkStartDate(): ?DateTimeInterface
     {
-        return $this->work_start_date;
+        return $this->workStartDate;
     }
 
-    public function setWorkStartDate(\DateTimeInterface $work_start_date): static
+    public function setWorkStartDate(DateTimeInterface $workStartDate): self
     {
-        $this->work_start_date = $work_start_date;
+        $this->workStartDate = $workStartDate;
 
         return $this;
     }
 
     public function getWorkDuration(): ?string
     {
-        return $this->work_duration;
+        return $this->workDuration;
     }
 
-    public function setWorkDuration(string $work_duration): static
+    public function setWorkDuration(string $workDuration): self
     {
-        $this->work_duration = $work_duration;
+        $this->workDuration = $workDuration;
 
         return $this;
     }
 
-    public function getPaymentDeadline(): ?\DateTimeInterface
+    public function getPaymentDeadline(): ?DateTimeInterface
     {
-        return $this->payment_deadline;
+        return $this->paymentDeadline;
     }
 
-    public function setPaymentDeadline(\DateTimeInterface $payment_deadline): static
+    public function setPaymentDeadline(DateTimeInterface $paymentDeadline): self
     {
-        $this->payment_deadline = $payment_deadline;
+        $this->paymentDeadline = $paymentDeadline;
 
         return $this;
     }
 
     public function getPaymentDelayRate(): ?int
     {
-        return $this->payment_delay_rate;
+        return $this->paymentDelayRate;
     }
 
-    public function setPaymentDelayRate(?int $payment_delay_rate): static
+    public function setPaymentDelayRate(?int $paymentDelayRate): self
     {
-        $this->payment_delay_rate = $payment_delay_rate;
+        $this->paymentDelayRate = $paymentDelayRate;
 
         return $this;
     }
 
-    public function isTvaApplicable(): ?bool
+    public function getTvaApplicable(): ?bool
     {
-        return $this->tva_applicable;
+        return $this->tvaApplicable;
     }
 
-    public function setTvaApplicable(bool $tva_applicable): static
+    public function setTvaApplicable(bool $tvaApplicable): self
     {
-        $this->tva_applicable = $tva_applicable;
+        $this->tvaApplicable = $tvaApplicable;
 
         return $this;
     }
 
-    public function getSentAt(): ?\DateTimeInterface
+    public function getIsDraft(): ?bool
     {
-        return $this->sent_at;
+        return $this->isDraft;
     }
 
-    public function setSentAt(?\DateTimeInterface $sent_at): static
+    public function setIsDraft(bool $isDraft): self
     {
-        $this->sent_at = $sent_at;
+        $this->isDraft = $isDraft;
 
         return $this;
     }
 
-    public function getSignedAt(): ?\DateTimeInterface
+    public function getSentAt(): ?DateTimeInterface
     {
-        return $this->signed_at;
+        return $this->sentAt;
     }
 
-    public function setSignedAt(?\DateTimeInterface $signed_at): static
+    public function setSentAt(?DateTimeInterface $sentAt): self
     {
-        $this->signed_at = $signed_at;
+        $this->sentAt = $sentAt;
 
         return $this;
     }
 
-    public function isDraft(): ?bool
+    public function getSignedAt(): ?DateTimeInterface
     {
-        return $this->is_draft;
+        return $this->signedAt;
     }
 
-    public function setDraft(bool $is_draft): static
+    public function setSignedAt(?DateTimeInterface $signedAt): self
     {
-        $this->is_draft = $is_draft;
+        $this->signedAt = $signedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|InvoiceService[]
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(InvoiceService $service): self
+    {
+        if (!$this->services->contains($service)) {
+            $this->services[] = $service;
+            $service->setDevis($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(InvoiceService $service): self
+    {
+        if ($this->services->removeElement($service)) {
+            // set the owning side to null (unless already changed)
+            if ($service->getDevis() === $this) {
+                $service->setDevis(null);
+            }
+        }
 
         return $this;
     }

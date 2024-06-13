@@ -22,7 +22,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    // /users/{id}/confirm_account
     #[Route('/{id}/confirm_account', name: 'app_user_confirm_account', methods: ['GET'])]
     public function confirmAccount(User $user, Request $request): Response|\Exception
     {

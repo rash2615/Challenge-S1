@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
+use Symfony\Component\Routing\Annotation\Route;
 
-#[AsController]
+#[Route('/user/confirm-account', name: 'api_confirm_account', methods: ['GET'])]
 class ConfirmAccount
 {
     public function __construct(private EntityManagerInterface $entityManager)
@@ -51,9 +51,10 @@ class ConfirmAccount
         $this->entityManager->persist($data);
         $this->entityManager->flush();
 
-        return new JsonResponse(
-            ['code' => Response::HTTP_OK, 'message' => "Votre compte a été confirmé avec succès."],
-            Response::HTTP_OK
-        );
+        dd($data);
+        // return new JsonResponse(
+        //     ['code' => Response::HTTP_OK, 'message' => "Votre compte a été confirmé avec succès."],
+        //     Response::HTTP_OK
+        // );
     }
 }
