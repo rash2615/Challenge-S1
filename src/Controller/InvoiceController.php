@@ -17,8 +17,8 @@ class InvoiceController extends AbstractController
     #[Route('/', name: 'app_invoice_index', methods: ['GET'])]
     public function index(InvoiceRepository $invoiceRepository): Response
     {
-        return $this->render('invoice/index.html.twig', [
-            'invoices' => $invoiceRepository->findAll(),
+        return $this->render('dashboard/invoice.html.twig', [
+            'invoices' => $invoiceRepository->findAll()
         ]);
     }
 
