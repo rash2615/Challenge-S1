@@ -1,31 +1,8 @@
-{# templates/register/index.html.twig #}
+{% extends 'login/index.html.twig' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Luxar</title>
-    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
-</head>
-<body class="bg-gray-100 text-gray-900 font-sans">
-    <!-- Header -->
-    <header class="bg-white shadow">
-        <div class="container mx-auto flex justify-between items-center py-6 px-4 md:px-6">
-            <div class="text-lg font-bold">
-                <a href="/" class="text-blue-500 hover:underline">Luxar</a>
-            </div>
-            <nav class="flex space-x-4">
-                <a href="/login" class="text-blue-500 hover:underline">Login</a>
-                <a href="/register" class="text-blue-500 hover:underline">Sign Up</a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container mx-auto mt-10 px-4 md:px-6">
-        <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-
+{% block form %}
+    {# <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md"> #}
+    {# <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none lg:py4 dark:bg-gray-950 rounded-2xl bg-clip-border"> #}
         <div class="max-w-xl mx-auto my-4 border-b-2 pb-4">	
             <div class="flex pb-3">
                 {# <div class="flex-1"></div> #}
@@ -78,37 +55,21 @@
             </div>
         </div>
 
-            {# <h1 class="text-2xl font-bold text-center mb-6">Inscription</h1> #}
-            {# <div class="flex justify-center items-center mb-8">
-                <div class="w-1/2">
-                    <div class="w-full rounded-full bg-gray-300">
-                        <div class="w-1/2 bg-blue-500 rounded-full"></div>
-                    </div>
-                </div>
-            </div> #}
 
-            <form id="formStep1" action="/register" method="post">
-                {% include 'register/step1.html.twig' %}
+        <form id="formStep1" action="/register" method="post">
+            {% include 'login/_step/step1.html.twig' %}
 
-                {% include 'register/step2.html.twig' %}
+            {% include 'login/_step/step2.html.twig' %}
 
-                {% include 'register/step3.html.twig' %}
-            </form>
+            {% include 'login/_step/step3.html.twig' %}
+        </form>
 
-            <div class="flex items-center justify-between mt-6">
-                <button type="button" id="form_btn_prev" onclick="step.prev()" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-400 hidden">Précédent</button>
-                <button type="button" id="form_btn_next" onclick="step.next()" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600">Suivant</button>
-                <button type="submit" id="form_submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600 hidden">S'inscrire</button>
-            </div>
+        <div class="flex items-center justify-between mt-6">
+            <button type="button" id="form_btn_prev" onclick="step.prev()" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-400 hidden">Précédent</button>
+            <button type="button" id="form_btn_next" onclick="step.next()" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600">Suivant</button>
+            <button type="submit" id="form_submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600 hidden">S'inscrire</button>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white mt-16 py-6">
-        <div class="container mx-auto text-center">
-            <p class="text-gray-700">&copy; 2024 Luxar. Tous droits réservés.</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
         // JavaScript pour gérer la navigation entre les étapes avec redirection
@@ -228,7 +189,13 @@
 
         // instance
         const step = new Step();
-
     </script>
-</body>
-</html>
+{% endblock %}
+
+{% block img %}
+    <div class="relative flex flex-col justify-center h-full bg-cover px-24 m-4 overflow-hidden bg-[url('https://localhost/build/images/login_signup.webp')] rounded-xl">
+        <span class="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-70"></span>
+        <h4 class="z-20 mt-12 font-bold text-white">Register</h4>
+        <p class="z-20 text-white">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic.</p>
+    </div>
+{% endblock %}

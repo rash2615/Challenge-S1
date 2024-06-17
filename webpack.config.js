@@ -1,10 +1,10 @@
-const Encore = require('@symfony/webpack-encore');
+const Encore = require("@symfony/webpack-encore");
 
 Encore
     // Directory where compiled assets will be stored
-    .setOutputPath('public/build/')
+    .setOutputPath("public/build/")
     // Public path used by the web server to access the output path
-    .setPublicPath('/build')
+    .setPublicPath("/build")
     // Only needed for CDN's or sub-directory deploy
     //.setManifestKeyPrefix('build/')
 
@@ -17,7 +17,23 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/app.js')
+    .addEntry("app", "./assets/app.js")
+    .addEntry("chartjs.min", "./assets/js/plugins/chartjs.min.js")
+    .addEntry("Chart.extension", "./assets/js/plugins/Chart.extension.js")
+    .addEntry(
+        "perfect-scrollbar.min",
+        "./assets/js/plugins/perfect-scrollbar.min.js"
+    )
+    .addEntry("carousel", "./assets/js/carousel.js")
+    .addEntry("charts", "./assets/js/charts.js")
+    .addEntry("dropdown", "./assets/js/dropdown.js")
+    // .addEntry("fixed-plugin", "./assets/js/fixed-plugin.js")
+    .addEntry("nav-pills", "./assets/js/nav-pills.js")
+    .addEntry("navbar-collapse", "./assets/js/navbar-collapse.js")
+    .addEntry("navbar-sticky", "./assets/js/navbar-sticky.js")
+    .addEntry("perfect-scrollbar", "./assets/js/perfect-scrollbar.js")
+    .addEntry("sidenav-burger", "./assets/js/sidenav-burger.js")
+    .addEntry("tooltips", "./assets/js/tooltips.js")
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -41,8 +57,15 @@ Encore
 
     // Enables @babel/preset-env polyfills
     .configureBabel(() => {}, {
-        useBuiltIns: 'usage',
+        useBuiltIns: "usage",
         corejs: 3,
+    })
+
+    // copi images folder
+    .copyFiles({
+        from: "./assets/images",
+        to: "images/[path][name].[ext]",
+        pattern: /\.(svg|png|jpg|jpeg|webp|ico)$/,
     })
 
     // Enables Sass/SCSS support
@@ -55,7 +78,6 @@ Encore
     //.enableReactPreset()
 
     // PostCSS support
-    .enablePostCssLoader()
-;
+    .enablePostCssLoader();
 
 module.exports = Encore.getWebpackConfig();

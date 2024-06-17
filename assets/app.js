@@ -6,6 +6,8 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
-import './styles/tailwind.css';
-
+import "./styles/app.css";
+import "./styles/tailwind.css";
+import "./styles/nucleo-icons.css";
+import "./styles/nucleo-svg.css";
+import "./styles/tooltips.css";
