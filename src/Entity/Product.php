@@ -5,16 +5,21 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: "product")]
+#[ORM\HasLifecycleCallbacks]
 class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[Groups(['users:read', 'users:write'])]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 45)]
+    #[Groups(['users:read', 'users:write'])]
     private ?string $nom_produit = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
@@ -37,12 +42,12 @@ class Product
         return $this->id;
     }
 
-    public function getNomProduit(): ?string
+    public function getNom_Produit(): ?string
     {
         return $this->nom_produit;
     }
 
-    public function setNomProduit(string $nom_produit): static
+    public function setNom_Produit(string $nom_produit): static
     {
         $this->nom_produit = $nom_produit;
 
@@ -85,24 +90,24 @@ class Product
         return $this;
     }
 
-    public function getPrixHt(): ?string
+    public function getPrix_Ht(): ?string
     {
         return $this->prix_ht;
     }
 
-    public function setPrixHt(string $prix_ht): static
+    public function setPrix_Ht(string $prix_ht): static
     {
         $this->prix_ht = $prix_ht;
 
         return $this;
     }
 
-    public function getPrixTtc(): ?string
+    public function getPrix_Ttc(): ?string
     {
         return $this->prix_ttc;
     }
 
-    public function setPrixTtc(string $prix_ttc): static
+    public function setPrix_Ttc(string $prix_ttc): static
     {
         $this->prix_ttc = $prix_ttc;
 
