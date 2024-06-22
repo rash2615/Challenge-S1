@@ -1,6 +1,6 @@
 {% extends 'dashboard/base.html.twig' %}
 
-{% set page_path = 'Dashboard' %}
+{% set breadcrumbs = 'Dashboard' %}
 {% set page_title = 'Dashboard' %}
 {% set sidenav_selected = 'dashboard' %}
 
@@ -9,24 +9,57 @@
         <!-- card1 -->
         {% embed  '_partials/_cards.html.twig' %}
             {% block title %}
-                TODAY'S MONEY
+                Product created
             {% endblock %}
 
             {# short #}
             {% block short %}
-                $53,000
+                {{ productsWidget.total }}
             {% endblock %}
 
             {# descritpion #}
             {% block descritpion %}
-                <span class="text-sm font-bold leading-normal text-emerald-500">+55%</span>
-                since yesterday
+                {% if productsWidget.lastweekPercentage > 0 %}
+                    <span class="text-sm font-bold leading-normal text-emerald-500">+{{productsWidget.lastweekPercentage}}%</span>
+                {% else %}
+                    <span class="text-sm font-bold leading-normal text-red-600">-{{productsWidget.lastweekPercentage}}%</span>
+                {% endif %}
+                since last week
             {% endblock %}
 
             {# icon #}
             {% block icon %}
-                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
-                    <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
+                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-orange-500 to-yellow-500">
+                    <i class="ni leading-none ni-cart text-lg relative top-3.5 text-white"></i>
+                </div>
+            {% endblock %}
+        {% endembed %}
+
+        <!-- card3 -->
+        {% embed  '_partials/_cards.html.twig' %}
+            {% block title %}
+                New Customers
+            {% endblock %}
+
+            {# short #}
+            {% block short %}
+                {{ customersWidget.total }}
+            {% endblock %}
+
+            {# descritpion #}
+            {% block descritpion %}
+                {% if customersWidget.lastweekPercentage > 0 %}
+                    <span class="text-sm font-bold leading-normal text-emerald-500">+{{customersWidget.lastweekPercentage}}%</span>
+                {% else %}
+                    <span class="text-sm font-bold leading-normal text-red-600">-{{customersWidget.lastweekPercentage}}%</span>
+                {% endif %}
+                since last week
+            {% endblock %}
+
+            {# icon #}
+            {% block icon %}
+                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-emerald-500 to-teal-400">
+                    <i class="ni leading-none ni-paper-diploma text-lg relative top-3.5 text-white"></i>
                 </div>
             {% endblock %}
         {% endembed %}
@@ -56,31 +89,6 @@
             {% endblock %}
         {% endembed %}
 
-        <!-- card3 -->
-        {% embed  '_partials/_cards.html.twig' %}
-            {% block title %}
-                New Clients
-            {% endblock %}
-
-            {# short #}
-            {% block short %}
-                +3,462
-            {% endblock %}
-
-            {# descritpion #}
-            {% block descritpion %}
-                <span class="text-sm font-bold leading-normal text-red-600">-2%</span>
-                since last quarter
-            {% endblock %}
-
-            {# icon #}
-            {% block icon %}
-                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-emerald-500 to-teal-400">
-                    <i class="ni leading-none ni-paper-diploma text-lg relative top-3.5 text-white"></i>
-                </div>
-            {% endblock %}
-        {% endembed %}
-
         <!-- card4 -->
         {% embed  '_partials/_cards.html.twig' %}
             {% block title %}
@@ -100,8 +108,8 @@
 
             {# icon #}
             {% block icon %}
-                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-orange-500 to-yellow-500">
-                    <i class="ni leading-none ni-cart text-lg relative top-3.5 text-white"></i>
+                <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
+                    <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
                 </div>
             {% endblock %}
         {% endembed %}
