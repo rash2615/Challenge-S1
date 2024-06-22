@@ -2,9 +2,6 @@
 
 namespace App\Entity;
 
-// use ApiPlatform\Core\Annotation\ApiResource;
-// use ApiPlatform\Core\Annotation\ApiSubresource;
-// use App\Controller\CustomerPicture;
 use App\Repository\CustomerRepository;
 use DateTime;
 use DateTimeInterface;
@@ -20,49 +17,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 #[ORM\Table(name: "customers")]
 #[ORM\HasLifecycleCallbacks]
-// #[
-//     ApiResource(
-//         collectionOperations: ['get', 'post'],
-//         itemOperations: [
-//             'get' => ['security' => 'object.getOwner() == user'],
-//             'put' => ['security' => 'object.getOwner() == user'],
-//             'delete' => ['security' => 'object.getOwner() == user'],
-//             'picture' => [
-//                 'path' => '/customers/{id}/picture',
-//                 'method' => Request::METHOD_POST,
-//                 'security' => 'object.getOwner() == user',
-//                 'deserialize' => false,
-//                 'controller' => CustomerPicture::class,
-//                 'normalization_context' => ['groups' => ['customers:picture:read']]
-//             ]
-//         ],
-//         denormalizationContext: ['groups' => ['customers:write']],
-//         normalizationContext: ['groups' => ['customers:read']],
-//     )
-// ]
 class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    #[Groups([
-        'customers:read',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     private int $id;
 
     #[ORM\Column(type: "string", length: 7)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank]
     #[Assert\Choice(
         choices: ['PERSON', 'COMPANY'],
@@ -71,120 +33,49 @@ class Customer
     private string $type;
 
     #[ORM\Column(type: "string", length: 30, nullable: true)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Length(min: 2, max: 30)]
     private ?string $firstname = null;
 
     #[ORM\Column(type: "string", length: 30, nullable: true)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank(allowNull: true)]
     #[Assert\Length(min: 2, max: 30)]
     private ?string $lastname = null;
 
     #[ORM\Column(type: "string", length: 255)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank]
     #[Assert\Email]
     private string $email;
 
     #[ORM\Column(type: "string", length: 30, nullable: true)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank(allowNull: true)]
     private ?string $phone = null;
 
     #[ORM\Column(type: "string", length: 40, nullable: true)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
+    // #[Assert\NotBlank(allowNull: true)]
     #[Assert\Length(max: 40)]
     private ?string $company = null;
 
     #[ORM\Column(type: "bigint", nullable: true)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'allInvoices:read',
-        'devis:read',
-        'allDevis:read'
-    ])]
-    #[Assert\NotBlank(allowNull: true)]
+    // #[Assert\NotBlank(allowNull: true)]
     #[Assert\Regex(pattern: "/^\d{14}$/", message: 'Le numéro SIRET doit contenir 14 chiffres.')]
     private ?string $siret = null;
 
     #[ORM\Column(type: "string", length: 255)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'devis:read'
-    ])]
     #[Assert\NotBlank]
     private string $address;
 
     #[ORM\Column(type: "integer")]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'devis:read'
-    ])]
     #[Assert\NotBlank]
     private int $postalCode;
 
     #[ORM\Column(type: "string", length: 255)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'devis:read'
-    ])]
     #[Assert\NotBlank]
     private string $city;
 
     #[ORM\Column(type: "string", length: 3)]
-    #[Groups([
-        'customers:read',
-        'customers:write',
-        'invoices:read',
-        'devis:read'
-    ])]
     #[Assert\NotBlank]
-    #[Assert\Country(alpha3: true)]
+    #[Assert\Country(alpha3: true, message: "Le code pays n'est pas valide. ex: FRA pour la France.")]
     private string $country;
 
     // #[Vich\UploadableField(mapping: "customer_picture", fileNameProperty: 'picture')]
@@ -194,26 +85,20 @@ class Customer
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $picture = null;
 
-    #[Groups([
-        'customers:read',
-        'customers:picture:read',
-        'invoices:read',
-        'devis:read'
-    ])]
     private ?string $pictureUrl = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "customers")]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotBlank]
-    private ?User $owner = null;
+    // #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "customers")]
+    // #[ORM\JoinColumn(nullable: false)]
+    // #[Assert\NotBlank]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable:true)]
+    private $owner = null;
 
     #[ORM\Column(type: "datetime")]
-    #[Groups(['customers:read'])]
     #[Assert\Type(DateTimeInterface::class)]
     private DateTimeInterface $createdAt;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    #[Groups(['customers:read'])]
     #[Assert\Type(DateTimeInterface::class)]
     private ?DateTimeInterface $updatedAt = null;
 
@@ -231,7 +116,7 @@ class Customer
     }
 
     /* Returns the last Invoice of the Customer for the UI */
-    #[Groups(['users_customers_subresource'])]
+    // #[Groups(['users_customers_subresource'])]
     public function getLastInvoice()
     {
         if (!$this->invoices->isEmpty()) {
@@ -383,7 +268,7 @@ class Customer
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): self
+    public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
 
