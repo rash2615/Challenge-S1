@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: "product")]
@@ -14,13 +16,12 @@ class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[Groups(['users:read', 'users:write'])]
+    // #[Groups(['users:read', 'users:write'])]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 45)]
-    #[Groups(['users:read', 'users:write'])]
-    private ?string $nom_produit = null;
+    private ?string $nomProduit = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $description = null;
@@ -32,24 +33,37 @@ class Product
     private ?string $categorie = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
-    private ?string $prix_ht = null;
+    private ?string $prixHt = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
-    private ?string $prix_ttc = null;
+    private ?string $prixTtc = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable:true)]
+    private $users;
+
+    #[ORM\Column(type: "datetime")]
+    #[Assert\Type(DateTimeInterface::class)]
+    private DateTimeInterface $createdAt;
+
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());    
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom_Produit(): ?string
+    public function getNomProduit(): ?string
     {
-        return $this->nom_produit;
+        return $this->nomProduit;
     }
 
-    public function setNom_Produit(string $nom_produit): static
+    public function setNomProduit(string $nomProduit): static
     {
-        $this->nom_produit = $nom_produit;
+        $this->nomProduit = $nomProduit;
 
         return $this;
     }
@@ -90,26 +104,50 @@ class Product
         return $this;
     }
 
-    public function getPrix_Ht(): ?string
+    public function getPrixHt(): ?string
     {
-        return $this->prix_ht;
+        return $this->prixHt;
     }
 
-    public function setPrix_Ht(string $prix_ht): static
+    public function setPrixHt(string $prixHt): static
     {
-        $this->prix_ht = $prix_ht;
+        $this->prixHt = $prixHt;
 
         return $this;
     }
 
-    public function getPrix_Ttc(): ?string
+    public function getPrixTtc(): ?string
     {
-        return $this->prix_ttc;
+        return $this->prixTtc;
     }
 
-    public function setPrix_Ttc(string $prix_ttc): static
+    public function setPrixTtc(string $prixTtc): static
     {
-        $this->prix_ttc = $prix_ttc;
+        $this->prixTtc = $prixTtc;
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): static
+    {
+        $this->users = $users;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
