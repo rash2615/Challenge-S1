@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <h1>User index</h1>
+
+        {% embed  '_partials/_table.html.twig' %}
+            {% block title %}
+                User index
+            {% endblock %}
+
+            {% block table_head %}
+                <tr>
+                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Id</th>
+                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Firstname</th>
+                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Lastname</th>
+                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Email</th>
+                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Roles</th>
+                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Remember_token</th>
+                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Email_verified_at</th>
+                    <th class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-collapse border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap text-slate-400 opacity-70"></th>
+                </tr>
+            {% endblock %}
+
+            {% block table_row %}
+                {% for user in users %}
+                    <tr>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{user.id}}</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{user.firstname}}</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{user.lastname}}</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{user.email}}</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">{{ user.roles|join(', ') }}</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">/</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">/</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">Show</a>
+                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <p class="mb-0 text-xs font-semibold leading-tight dark:text-white dark:opacity-80">no records found</p>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                            <a href="javascript:;" class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">/</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
+
+    {# <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Remember_token</th>
+                <th>Email_verified_at</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        {{ dump(user) }}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.firstname }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
+                <td>
+                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> #}
+
+    <a href="{{ path('app_user_new') }}">Create new</a>
+{% endblock %}

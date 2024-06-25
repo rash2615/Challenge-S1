@@ -20,3 +20,13 @@ vendor/*
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+package-lock.json
+.log
+###< symfony/webpack-encore-bundle ###
+
+# Ignore Composer's lock
+.lock

@@ -1,0 +1,98 @@
+<div class="flex-none w-full max-w-full px-3">
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+        <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+            {# <h6 class="dark:text-white">{% block title %}{% endblock %}</h6> #}
+            <div class="flex flex-wrap justify-between -mx-3">
+                <div class="flex items-center max-w-full px-3">
+                    <h6 class="mb-0 dark:text-white">{% block title %}{% endblock %}</h6>
+                </div>
+                {% block button %}{% endblock %}
+            </div>
+        </div>
+        <div class="flex-auto px-0 pt-0 pb-2">
+            <div class="p-0 overflow-x-auto">
+                <table class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
+                    <thead class="align-bottom">
+                        {% block table_head %}{% endblock %}
+                    </thead>
+                    <tbody>
+                        {% block table_row %}{% endblock %}
+                    </tbody>
+                </table>
+
+                {% if pages > 1 %}
+                    <div class="flex flex-col justify-between lg:flex-row mt-2 px-4 text-xs">
+                        <div class="flex flex-col lg:flex-row items-center space-x-2">
+                            {# <button class="py-2 px-4 bg-white text-gray-600 font-medium rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50 inline-flex items-center">
+                                10 items
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button> #}
+
+                            <p class="text-gray-500 mt-2 lg:mt-0">Showing {{ page }} to {{ pages }} of {{ total }} entries</p>
+                        </div>
+
+                        <nav aria-label="Pagination" class="flex justify-center items-center text-gray-600">
+                            {% if pages > 2 %}
+                                <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all|merge({(get): 1}))) }}" class="p-2 mr-2 rounded hover:bg-gray-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </a>
+                            {% endif %}
+
+                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all|merge({(get): page - 1}))) }}" class="p-2 mr-2 rounded hover:bg-gray-100" {% if page > 1 %}rel="prev"{% endif %}>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                </svg>
+                            </a>
+
+                            {% for p in range(max(page - 4, 1), min(page + 4, pages)) %}
+                                <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all|merge({(get): p}))) }}" class="px-4 py-2 rounded hover:bg-gray-100 {% if p == page %}bg-gray-200 text-gray-900 font-medium hover:bg-gray-100{% else %}hidden-xs{% endif %}">
+                                    {{ p }}
+                                </a>
+                            {% endfor %}
+
+                            <a href="{{ page < pages ? path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all|merge({(get): page +1 }))) : '#' }}" class="p-2 ml-2 rounded hover:bg-gray-100" {% if page < pages %}rel="next"{% endif %}>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                                </svg>
+                            </a>
+
+                            {% if pages > 2 %}
+                                {# {% if page == pages %}disabled{% endif %}"> #}
+                                <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(app.request.query.all|merge({(get): pages}))) }}" class="p-2 ml-2 rounded hover:bg-gray-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
+                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
+                                    </svg>
+                                </a>
+                            {% endif %}
+
+                            {# <a href="#" class="p-2 mr-2 rounded hover:bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a> #}
+
+                            {# <a href="#" class="px-4 py-2 rounded hover:bg-gray-100">1</a>
+                            <a href="#" class="px-4 py-2 rounded bg-gray-200 text-gray-900 font-medium hover:bg-gray-100">2</a>
+                            <a href="#" class="px-4 py-2 rounded hover:bg-gray-100">3</a>
+                            <a href="#" class="px-4 py-2 rounded hover:bg-gray-100">9</a>
+
+                            <a href="#" class="p-2 ml-2 rounded hover:bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a> #}
+                        </nav>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>

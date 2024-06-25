@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png" />
+        <link rel="icon" type="image/png" href="/Luxar.png" />
+        <title>LUXAR</title>
+
+        <!--     Fonts and icons     -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        <!-- Font Awesome Icons -->
+        <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+        {{ encore_entry_script_tags('navbar-collapse') }}
+        {{ encore_entry_script_tags('tooltips') }}
+    </head>
+    <body class="m-0 font-sans antialiased font-normal bg-white text-start text-base leading-default text-slate-500">
+        {% include "/login/_partials/navbar.html.twig" %}
+
+        <main class="mt-0 transition-all duration-200 ease-in-out">
+            <section>
+                <div class="relative flex items-center min-h-screen p-0 overflow-hidden bg-center bg-cover">
+                    <div class="container z-1">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="flex flex-col w-full max-w-full px-3 mx-auto lg:mx-0 shrink-0 md:flex-0 md:w-7/12 lg:w-5/12 xl:w-4/12">
+                                {% block form %}{% endblock %}
+                            </div>
+                            <div class="absolute top-0 right-0 flex-col justify-center hidden w-6/12 h-full max-w-full px-3 pr-0 my-auto text-center flex-0 lg:flex">
+                                {% block img %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="py-12">
+            <div class="container">
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-8/12 max-w-full px-3 mx-auto mt-1 text-center flex-0">
+                        <p class="mb-0 text-slate-400">
+                        Copyright © 2024 LUXAR
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
