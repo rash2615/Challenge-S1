@@ -9,8 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 // use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -87,12 +85,10 @@ class Customer
 
     private ?string $pictureUrl = null;
 
-    // #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "customers")]
-    // #[ORM\JoinColumn(nullable: false)]
-    // #[Assert\NotBlank]
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable:true)]
-    private $owner = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "customers")]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    private ?User $owner = null;
 
     #[ORM\Column(type: "datetime")]
     #[Assert\Type(DateTimeInterface::class)]
@@ -113,6 +109,11 @@ class Customer
         $this->setCreatedAt(new \DateTime());
         $this->invoices = new ArrayCollection();
         $this->devis = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->firstname . ' ' . $this->lastname;
     }
 
     /* Returns the last Invoice of the Customer for the UI */
@@ -268,7 +269,7 @@ class Customer
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): static
+    public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
 

@@ -128,13 +128,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
-    // #[ORM\OneToMany(targetEntity: Customer::class, mappedBy: "owner", orphanRemoval: true, cascade: ["persist"])]
-    // private Collection $customers;
+    #[ORM\OneToMany(targetEntity: Customer::class, mappedBy: "owner", orphanRemoval: true, cascade: ["persist"])]
+    private Collection $customers;
 
     public function __construct()
     {
         $this->setCreatedAt(new DateTime());
-        // $this->customers = new ArrayCollection();
+        $this->customers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,32 +267,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection|Customer[]
      */
-    // public function getCustomers(): Collection
-    // {
-    //     return $this->customers;
-    // }
+    public function getCustomers(): Collection
+    {
+        return $this->customers;
+    }
 
-    // public function addCustomer(Customer $customer): self
-    // {
-    //     if (!$this->customers->contains($customer)) {
-    //         $this->customers[] = $customer;
-    //         $customer->setOwner($this);
-    //     }
+    public function addCustomer(Customer $customer): self
+    {
+        if (!$this->customers->contains($customer)) {
+            $this->customers[] = $customer;
+            $customer->setOwner($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeCustomer(Customer $customer): self
-    // {
-    //     if ($this->customers->removeElement($customer)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($customer->getOwner() === $this) {
-    //             $customer->setOwner(null);
-    //         }
-    //     }
+    public function removeCustomer(Customer $customer): self
+    {
+        if ($this->customers->removeElement($customer)) {
+            // set the owning side to null (unless already changed)
+            if ($customer->getOwner() === $this) {
+                $customer->setOwner(null);
+            }
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     public function getConfirmationToken(): ?string
     {

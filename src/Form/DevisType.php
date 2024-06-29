@@ -3,40 +3,89 @@
 namespace App\Form;
 
 use App\Entity\Devis;
+use App\Entity\Customer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class DevisType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->listUsers = $options['list_users'];
+
+        $classStyle = 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none';
+
         $builder
-            ->add('customer_id')
-            ->add('chrono')
-            ->add('status')
-            ->add('validity_date', null, [
-                'widget' => 'single_text',
+            ->add('customer', EntityType::class, [
+                'class' => Customer::class,
+                'choices' => $this->listUsers,
+                'choice_label' => function (Customer $customer): string
+                {
+                    return $customer->getFirstname() . ' ' . $customer->getLastname();
+                },
+                'attr' => [
+                    'placeholder' => 'Client',
+                    'required' => true,
+                    'title' => 'Sélectionnez le client',
+                    'class' => $classStyle,
+                ]
             ])
-            ->add('created_at', null, [
-                'widget' => 'single_text',
+            ->add('validity_date', DateType::class, [
+                'label' => "Date d'expiration du devis",
+                'attr' => [
+                    'class' => $classStyle,
+                ]
             ])
-            ->add('work_start_date', null, [
-                'widget' => 'single_text',
+            ->add('work_start_date', DateType::class, [
+                "label" => "Date de début de la mission",
+                'attr' => [
+                    'class' => $classStyle,
+                ]
             ])
-            ->add('work_duration')
-            ->add('payment_deadline', null, [
-                'widget' => 'single_text',
+            ->add('work_duration', TextType::class, [
+                "label" => "Durée estimée de la mission",
+                'help' => 'Durée en jours',
+                'attr' => [
+                    'required' => true,
+                    'class' => $classStyle,
+                    'placeholder' => '5'
+                ]
             ])
-            ->add('payment_delay_rate')
-            ->add('tva_applicable')
-            ->add('sent_at', null, [
-                'widget' => 'single_text',
+            ->add('payment_deadline', DateType::class, [
+                "label" => "Date limite de paiement",
+                'attr' => [
+                    'class' => $classStyle
+                ]
             ])
-            ->add('signed_at', null, [
-                'widget' => 'single_text',
+            ->add('payment_delay_rate', IntegerType::class, [
+                "label" => "Taux de pénalité en cas de retard",
+                'help' => "Valeur en pourcentage",
+                'attr' => [
+                    'class' => $classStyle,
+                    'min' => '0',
+                    'max' => '100'
+                ]
             ])
-            ->add('is_draft')
+            ->add('tva_applicable', CheckboxType::class, [
+                'attr' => [
+                    'class' => $classStyle,
+                    'required'   => false,
+                    'empty_data' => false
+                ]
+            ])
+            ->add('is_draft', CheckboxType::class, [
+                'attr' => [
+                    'class' => $classStyle,
+                    'required'   => false,
+                    'empty_data' => false
+                ]
+            ])
         ;
     }
 
@@ -44,6 +93,12 @@ class DevisType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Devis::class,
+            'list_users' => null
         ]);
     }
+
+    // public function setListUsers($listUsers)
+    // {
+    //     $this->listUsers = $listUsers;
+    // }
 }

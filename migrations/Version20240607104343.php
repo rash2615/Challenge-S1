@@ -23,17 +23,10 @@ final class Version20240607104343 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE invoices_services (
-            id SERIAL NOT NULL, 
-            invoice_id INT DEFAULT NULL, 
-            name VARCHAR(60) NOT NULL, 
-            description VARCHAR(255) DEFAULT NULL, 
-            quantity INT DEFAULT NULL, 
-            unit_price DOUBLE PRECISION NOT NULL, 
-            devis_id INT DEFAULT NULL, 
-            PRIMARY KEY(id)
-        )');
-        $this->addSql('CREATE INDEX IDX_6D3CB6CB2989F1FD ON invoices_services (invoice_id)');
+        $this->addSql('CREATE TABLE invoices_services (id SERIAL NOT NULL, devis_id INT DEFAULT NULL, product_id INT NOT NULL, invoice_id INT DEFAULT NULL, quantity INT DEFAULT NULL, unit_price DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
+        // $this->addSql('CREATE INDEX idx_6d3cb6cb41defada ON invoices_services (devis_id)');
+        $this->addSql('CREATE INDEX idx_6d3cb6cb2989f1fd ON invoices_services (invoice_id)');
+        $this->addSql('CREATE INDEX IDX_6D3CB6CB4584665A ON invoices_services (product_id)');
     }
 
     public function down(Schema $schema): void

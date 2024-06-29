@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Devis;
+use App\Entity\InvoiceService;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
+use App\Repository\CustomerRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,60 +18,126 @@ use Symfony\Component\Routing\Attribute\Route;
 class DevisController extends AbstractController
 {
     #[Route('/', name: 'app_devis_index', methods: ['GET'])]
-    public function index(DevisRepository $devisRepository): Response
+    public function index(Request $request, DevisRepository $devisRepository): Response
     {
-        return $this->render('devis/index.html.twig', [
-            'devis' => $devisRepository->findAll(),
+        $listDevis = $devisRepository->findByPage(
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('dashboard/devis.html.twig', [
+            'devis' => $listDevis["devis"],
+            'total' => $listDevis["total"],
+            'page' => $listDevis["page"],
+            'pages' => $listDevis["pages"],
+            'get' => 'page',
+            'limit' => $listDevis["limit"]
         ]);
     }
 
     #[Route('/new', name: 'app_devis_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, CustomerRepository $customerRepository, ProductRepository $productRepository): Response
     {
-        $devi = new Devis();
-        $form = $this->createForm(DevisType::class, $devi);
-        $form->handleRequest($request);
+        $getAllUsers = $customerRepository->createQueryBuilder('customers')
+            ->where('customers.owner = :owner')
+            ->setParameter('owner', $this->getUser())
+            ->getQuery()
+            ->getResult();
 
+        $getAllProduct = $productRepository->createQueryBuilder('product')
+            ->select("product.id as id, CONCAT(product.id, ' - ', product.nomProduit) as nomProduit")
+            ->where('product.users = :users')
+            ->setParameter('users', $this->getUser())
+            ->getQuery()
+            ->getResult();
+
+        $devis = new Devis();
+        $form = $this->createForm(DevisType::class, $devis, [
+            'list_users' => $getAllUsers
+        ]);
+
+        $form->handleRequest($request);
+        
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($devi);
+            
+            $devis->setStatus('NEW');
+            $devis->setChrono('D-' . date('Y') . '-' . substr(hash('crc32', date('Y-m-d H:i:s')), 0, 6));
+
+            $entityManager->persist($devis);
+
+            foreach ($request->get('_product') as $key => $value) {
+                $is = new InvoiceService();
+
+                $is->setProduct($productRepository->find($value));
+                $is->setQuantity($request->get('_quantity')[$key]);
+                $is->setUnitPrice($request->get('_price')[$key]);
+                $is->setDevis($devis);
+
+                $entityManager->persist($is);
+            }
+
+            // dd(
+            //     $entityManager,
+            //     // $request
+            // );
+            
             $entityManager->flush();
 
             return $this->redirectToRoute('app_devis_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('devis/new.html.twig', [
-            'devi' => $devi,
+        return $this->render('dashboard/devis/new.html.twig', [
+            'devis' => $devis,
             'form' => $form,
+
+            'list_product' => $getAllProduct
         ]);
     }
 
-    #[Route('/{id}', name: 'app_devis_show', methods: ['GET'])]
-    public function show(Devis $devi): Response
+    #[Route('/{id}/view', name: 'app_devis_view', methods: ['GET'])]
+    public function edit(Devis $devis): Response
     {
-        return $this->render('devis/show.html.twig', [
-            'devi' => $devi,
+        return $this->render('dashboard/devis/view.html.twig', [
+            'devis' => $devis
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_devis_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Devis $devi, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/edit/statut', name: 'app_devis_edit_statut', methods: ['POST'])]
+    public function toEdit(Request $request, Devis $devis, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(DevisType::class, $devi);
-        $form->handleRequest($request);
+        $mapStatus = [
+            0 => 'NEW',
+            1 => 'SENT',
+            2 => 'SIGNED',
+            3 => 'CANCELLED'
+        ];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        $statut = $request->getPayload()->get('statut');
+        $sentAt = $request->getPayload()->get('sentAt');
+        $signedAt = $request->getPayload()->get('signedAt');
 
-            return $this->redirectToRoute('app_devis_index', [], Response::HTTP_SEE_OTHER);
+        if (!array_key_exists($statut, $mapStatus)) {
+            return $this->redirectToRoute('app_devis_view', ['id' => $devis->getId()]);
         }
 
-        return $this->render('devis/edit.html.twig', [
-            'devi' => $devi,
-            'form' => $form,
-        ]);
+        if (($statut == 1 && empty($sentAt)) || ($statut == 2 && empty($signedAt))) {
+            return $this->redirectToRoute('app_devis_view', ['id' => $devis->getId()]);
+        }
+
+        $devis->setStatus($mapStatus[$request->getPayload()->get('statut')]);
+        
+        if ($statut == 1) {
+            $devis->setSentAt(new \DateTime($sentAt));
+        } elseif ($statut == 2) {
+            $devis->setSignedAt(new \DateTime($signedAt));
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_devis_view', ['id' => $devis->getId()]);
     }
 
-    #[Route('/{id}', name: 'app_devis_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_devis_delete', methods: ['POST'])]
     public function delete(Request $request, Devis $devi, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$devi->getId(), $request->getPayload()->get('_token'))) {

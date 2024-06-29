@@ -5,8 +5,9 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -16,7 +17,6 @@ class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    // #[Groups(['users:read', 'users:write'])]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
@@ -46,9 +46,13 @@ class Product
     #[Assert\Type(DateTimeInterface::class)]
     private DateTimeInterface $createdAt;
 
+    #[ORM\OneToMany(targetEntity: InvoiceService::class, mappedBy: "invoiceService", orphanRemoval: true, cascade: ["persist"])]
+    private Collection $invoiceService;
+
     public function __construct()
     {
-        $this->setCreatedAt(new \DateTime());    
+        $this->setCreatedAt(new \DateTime());   
+        $this->invoiceService = new ArrayCollection(); 
     }
 
     public function getId(): ?int
@@ -148,6 +152,36 @@ class Product
     public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Devis[]
+     */
+    public function getInvoiceService(): Collection
+    {
+        return $this->invoiceService;
+    }
+
+    public function addInvoiceService(InvoiceService $invoiceService): self
+    {
+        if (!$this->invoiceService->contains($invoiceService)) {
+            $this->invoiceService[] = $invoiceService;
+            $invoiceService->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoiceService(InvoiceService $invoiceService): self
+    {
+        if ($this->invoiceService->removeElement($invoiceService)) {
+            // set the owning side to null (unless already changed)
+            if ($invoiceService->getProduct() === $this) {
+                $invoiceService->setProduct(null);
+            }
+        }
 
         return $this;
     }
