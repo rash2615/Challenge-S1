@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ asset("build/images/luxar_ico_color.ico") }}" />
+        <link rel="icon" type="image/png" href="{{ asset("build/images/luxar_ico_color.ico") }}" />
+        <title>{% block title %}Luxar{% endblock %}</title>
+        <!-- Fonts and icons -->
+        <link
+            href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
+            rel="stylesheet"
+        />
+        <!-- Font Awesome Icons -->
+        <script
+            src="https://kit.fontawesome.com/42d5adcbca.js"
+            crossorigin="anonymous"
+        ></script>
+        <!-- Popper -->
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <!-- Main Styling -->
+        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+    </head>
+
+    <body class="m-0 font-sans text-base antialiased font-normal dark:bg-slate-900 leading-default bg-gray-50 text-slate-500">
+        <div class="absolute w-full bg-blue-500 dark:hidden min-h-75"></div>
+        
+        {% include "/dashboard/_partials/sidenav.html.twig" %}
+
+        <main class="relative h-full max-h-screen transition-all duration-200 ease-in-out xl:ml-68 rounded-xl">
+            {% include "/dashboard/_partials/navbar.html.twig" %}
+
+            <div class="w-full px-6 py-6 mx-auto">
+                {% block row1 %}{% endblock %}
+
+                {% block row2 %}{% endblock %}
+
+                {% block row3 %}{% endblock %}
+
+                <footer class="pt-4">
+                    <div class="w-full px-6 mx-auto">
+                        <div class="flex flex-wrap items-center -mx-3 lg:justify-between">
+                            <div class="w-full max-w-full px-3 mt-0 mb-6 shrink-0 lg:mb-0 lg:w-1/2 lg:flex-none">
+                                <div class="text-sm leading-normal text-center text-slate-500 lg:text-left">
+                                    Copyright © <script>document.write(new Date().getFullYear());</script> Luxar <i class="fa fa-heart"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            {% block modal %}{% endblock %}
+        </main>
+    </body>
+
+    {{ encore_entry_script_tags('chartjs.min') }}
+    {# {{ encore_entry_script_tags('Chart.extension') }} #}
+    {# {{ encore_entry_script_tags('perfect-scrollbar.min') }} #}
+
+    {{ encore_entry_script_tags('carousel') }}
+    {{ encore_entry_script_tags('charts') }}
+    {{ encore_entry_script_tags('dropdown') }}
+    {{ encore_entry_script_tags('nav-pills') }}
+    {{ encore_entry_script_tags('navbar-collapse') }}
+    {{ encore_entry_script_tags('navbar-sticky') }}
+    {# {{ encore_entry_script_tags('perfect-scrollbar') }} #}
+    {{ encore_entry_script_tags('sidenav-burger') }}
+    {{ encore_entry_script_tags('tooltips') }}
+</html>

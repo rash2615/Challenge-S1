@@ -1,0 +1,219 @@
+{% extends 'dashboard/base.html.twig' %}
+
+{% set breadcrumbs = [
+    {
+        text: 'invoices',
+        url: path('app_invoice_index')
+    },
+    {
+        text: 'New',
+        url: path('app_invoice_new')
+    }
+] %}
+{% set page_title = 'invoices' %}
+{% set sidenav_selected = 'invoices' %}
+
+{% block row1 %}
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 shrink-0 md:w-8/12 md:flex-0">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
+                    <div class="flex items-center">
+                        <p class="mb-0 dark:text-white/80">New invoices</p>
+                    </div>
+                </div>
+
+                <div class="flex-auto p-6">
+                    {{ form_start(form) }}
+
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="flex space-x-4 mb-4 w-full max-w-full px-3 shrink-0">
+                                <div class="md:w-1/4 w-1/2">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.customer) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.customer) }}
+                                    </div>
+                                    {{ form_widget(form.customer) }}
+                                </div>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.payment_deadline) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.payment_deadline) }}
+                                    </div>
+                                    {{ form_widget(form.payment_deadline) }}
+                                </div>
+                            </div>
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.payment_delay_rate) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.payment_delay_rate) }}
+                                    </div>
+                                    {{ form_widget(form.payment_delay_rate) }}
+                                    {{ form_help(form.payment_delay_rate) }}
+                                </div>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.service_done_at) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.service_done_at) }}
+                                    </div>
+                                    {{ form_widget(form.service_done_at) }}
+                                    {{ form_help(form.service_done_at) }}
+                                </div>
+                            </div>
+
+                            <div class="flex w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="w-1/2 mb-4 pr-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.tva_applicable) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.tva_applicable) }}
+                                    </div>
+                                    {{ form_widget(form.tva_applicable, {'required': false}) }}
+                                </div>
+
+                                <div class="w-1/2 mb-4 pr-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.is_draft) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.is_draft) }}
+                                    </div>
+                                    {{ form_widget(form.is_draft, {'required': false}) }}
+                                </div>
+                            </div>
+
+                            <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0 w-full">
+                                <div class="flex items-center">
+                                    <p class="mb-0 dark:text-white/80">Ajoutées des produits</p>
+                                </div>
+                            </div>
+
+                            <div id="product_1" class="flex px-3 w-full mb-4">
+                                <div class="grid px-3 w-1/2">
+                                    <div class="grid px-3 w-1/2">
+                                        <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                            Nom du produit
+                                        </label>
+                                    </div>
+                                    <div class="grid px-3 w-1/2">
+                                        <select name="_product[]">
+                                            {% for product in list_product %}
+                                                <option value="{{ product.id }}">{{ product.nomProduit }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid px-3 w-1/2">
+                                    <div class="grid px-3 w-1/2">
+                                        <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                            Quantité
+                                        </label>
+                                    </div>
+                                    <div class="grid px-3 w-1/2">
+                                        <input type="number" name="_quantity[]" value="1" min="1">
+                                    </div>
+                                </div>
+
+                                <div class="grid px-3 w-1/2">
+                                    <div class="grid px-3 w-1/2">
+                                        <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                            Prix (HT)
+                                        </label>
+                                    </div>
+                                    <div class="grid px-3 w-1/2">
+                                        <input type="number" name="_price[]" value="0" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="trash align-middle flex justify-end w-12"></div>
+                            </div>
+
+                            <div class="flex w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="w-1/2 mb-4 pr-4">
+                                    <button  class="btn inline-block" type="button" id="add_product" onclick="product.createDiv(); product.appendDiv();">Ajouter un produit</button>
+                                </div>
+                            </div>
+
+                            {{ form_row(form._token) }}
+                        </div>
+
+                        <div class="flex -mx-3 mt-8">
+                            <div class="max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <a href="{{ path("app_customer_index") }}" class="btn inline-block px-8 py-2 ml-auto font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-blue-500 border-0 rounded-lg shadow-md cursor-pointer text-xs tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opatva_applicable-85">Back to table</a>
+                            </div>
+                            <div class="max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <button class="btn inline-block px-8 py-2 ml-auto font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-blue-500 border-0 rounded-lg shadow-md cursor-pointer text-xs tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opatva_applicable-85">Save</button>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        class Product {
+            /**
+             * @var int
+             * 
+             * id of the div product
+             */
+            #id = 1;
+
+            /**
+             * @var HTMLElement
+             * 
+             * clone of the div product
+             */
+            clone = null;
+
+            /**
+             * HTML of div trash
+             */
+            trash = `<button class="btn inline-block" type="button" onclick="product.removeDiv(this.parentElement.parentElement.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>
+                    </button>`;
+
+            constructor()
+            {
+            }
+
+            createDiv()
+            {
+                let elem = document.getElementById('product_1');
+                let clone = elem.cloneNode(true);
+                this.#id = this.#id + 1;
+                clone.id = 'product_' + this.#id;
+
+                // add trash
+                // search class trash
+                let trash = clone.getElementsByClassName('trash');
+                trash[0].innerHTML = this.trash;
+
+                this.clone = clone;
+            }
+
+            appendDiv()
+            {
+                let elem = document.getElementById('product_1');
+                elem.insertAdjacentElement('afterend', this.clone);
+            }
+
+            removeDiv(selectorId)
+            {
+                let elem = document.getElementById(selectorId);
+                elem.remove();
+            }
+        }
+
+        let product = new Product();
+    </script>
+
+{% endblock %}

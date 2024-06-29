@@ -1,0 +1,30 @@
+{# templates/register/step2.html.twig #}
+
+<div id="step3" class="step hidden">
+    <h2 class="text-lg font-semibold mb-4">Etape 2 : Coordonnées de la société</h2>
+    <form id="formStep3" action="/register" method="post">
+        <div class="mb-4">
+            <label for="company_name" class="block text-gray-700">Nom de la société</label>
+            <input type="text" id="company_name" name="company_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
+        <div class="mb-4">
+            <label for="company_address" class="block text-gray-700">Adresse de la société</label>
+            <input type="text" id="company_address" name="company_address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
+        <div class="mb-4">
+            <label for="siret_number" class="block text-gray-700">Numéro de SIRET</label>
+            <input type="text" id="siret_number" name="siret_number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
+        <div class="mb-4">
+            <label for="tva_number" class="block text-gray-700">Numéro de TVA</label>
+            <input type="text" id="tva_number" name="tva_number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+        </div>
+        <div class="flex justify-center items-center mt-6">
+            <div class="w-1/2">
+                <div class="w-full rounded-full bg-gray-300">
+                    <div class="w-1/2 bg-blue-500 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

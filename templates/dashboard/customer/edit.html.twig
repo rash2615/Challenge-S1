@@ -1,0 +1,163 @@
+{% extends 'dashboard/base.html.twig' %}
+
+{% set breadcrumbs = [
+    {
+        text: 'Customers',
+        url: path('app_customer_index')
+    },
+    {
+        text: 'Edit',
+        url: path('app_customer_get_edit', {'id': customer.id})
+    }
+] %}
+{% set page_title = 'Customers' %}
+{% set sidenav_selected = 'customers' %}
+
+{# customer #}
+{% block row1 %}
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 shrink-0 md:w-8/12 md:flex-0">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+                    <div class="flex flex-wrap justify-between -mx-3">
+                        <div class="flex items-center max-w-full px-3">
+                            <p class="mb-0 dark:text-white/80">Edit Customer : {{ customer.firstname }} - {{ customer.lastname }} - [{{ customer.id }}]</p>
+                        </div>
+                        <div class="flex px-3 text-right">
+                            <div class="relative">
+                                <div class="flex -mx-3 pt-3">
+                                    <div class="max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                        {{ include('dashboard/customer/_delete_form.html.twig') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    form:has(select#customer_type option:checked:not([value="COMPANY"])) div#company {
+                        display: none;
+                    }
+                </style>
+
+                <div class="flex-auto p-6">
+                    {{ form_start(form) }}
+
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="flex space-x-4 mb-4 w-full max-w-full px-3 shrink-0">
+                                <div class="md:w-1/4 w-1/2">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.firstname) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.firstname) }}
+                                    </div>
+                                    {{ form_widget(form.firstname, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                                <div class="md:w-1/4 w-1/2">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.lastname) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.lastname) }}
+                                    </div>
+                                    {{ form_widget(form.lastname, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+
+                                <div class="md:w-1/4 w-1/2">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.email) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.email) }}
+                                    </div>
+                                    {{ form_widget(form.email, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                                <div class="md:w-1/4 w-1/2">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.phone) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.phone) }}
+                                    </div>
+                                    {{ form_widget(form.phone, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+
+                        {# <div class="question"> #}
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.type) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.type) }}
+                                    </div>
+                                    {{ form_widget(form.type, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+                            <div id="company" class="flex w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="w-1/2 mb-4 pr-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.company) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.company) }}
+                                    </div>
+                                    {{ form_widget(form.company, {'required': false, 'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+
+                                <div class="w-1/2 mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.siret) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.siret) }}
+                                    </div>
+                                    {{ form_widget(form.siret, {'required': false, 'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+                        {# </div> #}
+
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.address) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.address) }}
+                                    </div>
+                                    {{ form_widget(form.address, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.postal_code) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.postal_code) }}
+                                    </div>
+                                    {{ form_widget(form.postal_code, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.city) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.city) }}
+                                    </div>
+                                    {{ form_widget(form.city, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+                            <div class="w-full max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <div class="mb-4">
+                                    <label for="username" class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ form_label(form.country) }}</label>
+                                    <div class="form-error">
+                                        {{ form_errors(form.country) }}
+                                    </div>
+                                    {{ form_help(form.country, {'attr': {'class': 'text-xs text-slate-400 dark:text-white/80'}}) }}
+                                    {{ form_widget(form.country, {'attr': {'class': 'focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none'}}) }}
+                                </div>
+                            </div>
+
+                            {{ form_row(form._token) }}
+                        </div>
+
+                        <div class="flex -mx-3">
+                            <div class="max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <a href="{{ path("app_customer_index") }}" class="btn inline-block px-8 py-2 ml-auto font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-blue-500 border-0 rounded-lg shadow-md cursor-pointer text-xs tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85">Back to table</a>
+                            </div>
+                            <div class="max-w-full px-3 shrink-0 md:w-6/12 md:flex-0">
+                                <button class="btn inline-block px-8 py-2 ml-auto font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-blue-500 border-0 rounded-lg shadow-md cursor-pointer text-xs tracking-tight-rem hover:shadow-xs hover:-translate-y-px active:opacity-85">Save</button>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
