@@ -14,78 +14,16 @@ class InvoiceService
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    #[Groups([
-        'invoices:read',
-        'customers_invoices_subresource',
-        'allInvoices:read',
-        'devis:read',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private int $id;
 
-    #[ORM\Column(type: "string", length: 60)]
-    #[Groups([
-        'invoices:read',
-        'invoices:write',
-        'invoice:update',
-        'customers_invoices_subresource',
-        'allInvoices:read',
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 60)]
-    private string $name;
-
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Groups([
-        'invoices:read',
-        'invoices:write',
-        'invoice:update',
-        'customers_invoices_subresource',
-        'allInvoices:read',
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
-    #[Assert\NotBlank(allowNull: true)]
-    private ?string $description = null;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "product", cascade: ["persist"])]
+    private ?Product $product = null;
 
     #[ORM\Column(type: "integer", nullable: true)]
-    #[Groups([
-        'invoices:read',
-        'invoices:write',
-        'invoice:update',
-        'customers_invoices_subresource',
-        'allInvoices:read',
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank(allowNull: true)]
     private ?int $quantity = null;
 
     #[ORM\Column(type: "float")]
-    #[Groups([
-        'invoices:read',
-        'invoices:write',
-        'invoice:update',
-        'customers_invoices_subresource',
-        'allInvoices:read',
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     #[Assert\NotBlank]
     private float $unitPrice;
 
@@ -100,26 +38,14 @@ class InvoiceService
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getProduct(): ?Product
     {
-        return $this->name;
+        return $this->product;
     }
 
-    public function setName(string $name): self
+    public function setProduct(?Product $product): self
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
+        $this->product = $product;
 
         return $this;
     }

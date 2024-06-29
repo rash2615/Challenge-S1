@@ -81,7 +81,8 @@ class CustomerType extends AbstractType
                 'label' => 'Adresse',
                 'attr' => [
                     'placeholder' => 'Adresse',
-                    'required' => false,
+                    'required'   => false,
+                    'empty_data' => false,
                     'title' => 'Entrez l\'adresse du client'
                 ]
             ])
@@ -97,7 +98,8 @@ class CustomerType extends AbstractType
                 'label' => 'Ville',
                 'attr' => [
                     'placeholder' => 'Ville',
-                    'required' => false,
+                    'required'   => false,
+                    'empty_data' => false,
                     'title' => 'Entrez le nom de la ville'
                 ]
             ])
@@ -105,10 +107,11 @@ class CustomerType extends AbstractType
                 'label' => 'Pays',
                 'attr' => [
                     'placeholder' => 'Pays',
-                    'required' => false,
-                    'title' => 'Entrez le nom du pays',
-                    'help' => 'FRA pour la France'
-                ]
+                    'required'   => false,
+                    'empty_data' => false,
+                    'title' => 'Entrez le nom du pays'
+                ],
+                'help' => 'FRA pour la France'
             ])
         ;
 
