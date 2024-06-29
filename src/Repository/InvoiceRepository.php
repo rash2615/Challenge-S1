@@ -7,6 +7,8 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)
@@ -42,6 +44,40 @@ class InvoiceRepository extends ServiceEntityRepository
         } catch (NoResultException $e) {
             return null;
         }
+    }
+
+    /*
+     * Retrieve all the invoices for the logged User.
+     * 
+     * @param User $user The current logged User
+     */
+    public function findByPage($page = 1, $max = 10): array
+    {
+        $dql = $this->createQueryBuilder("invoices");
+        $dql->orderBy('invoices.id', 'ASC');
+
+        $firstResult = ($page - 1) * $max;
+
+        $query = $dql->getQuery();
+        $query->setFirstResult($firstResult);
+        $query->setMaxResults($max);
+
+        $paginator = new Paginator($query);
+
+        if(($paginator->count() <= $firstResult) && $page != 1) {
+            throw new NotFoundHttpException('Page not found');
+        }
+
+        $pages = ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
+
+        return [
+            'invoices' => $paginator,
+            'total' => $paginator->count(),
+            'page' => $page,
+            'pages' => $pages,
+            'limit' => $max,
+            'get' => 'page'
+        ];
     }
 
     // /**

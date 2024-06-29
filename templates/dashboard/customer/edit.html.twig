@@ -36,7 +36,7 @@
                 </div>
 
                 <style>
-                    option[value="PERSON"]:checked > #company {
+                    form:has(select#customer_type option:checked:not([value="COMPANY"])) div#company {
                         display: none;
                     }
                 </style>
