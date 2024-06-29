@@ -7,6 +7,8 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Devis|null find($id, $lockMode = null, $lockVersion = null)
@@ -42,6 +44,35 @@ class DevisRepository extends ServiceEntityRepository
         } catch (NoResultException $e) {
             return null;
         }
+    }
+
+    public function findByPage($page = 1, $max = 10)
+    {
+        $dql = $this->createQueryBuilder("devis");
+        $dql->orderBy('devis.id', 'ASC');
+
+        $firstResult = ($page - 1) * $max;
+
+        $query = $dql->getQuery();
+        $query->setFirstResult($firstResult);
+        $query->setMaxResults($max);
+
+        $paginator = new Paginator($query);
+
+        if(($paginator->count() <= $firstResult) && $page != 1) {
+            throw new NotFoundHttpException('Page not found');
+        }
+
+        $pages = ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
+
+        return [
+            'devis' => $paginator,
+            'total' => $paginator->count(),
+            'page' => $page,
+            'pages' => $pages,
+            'limit' => $max,
+            'get' => 'page'
+        ];
     }
 
     // /**

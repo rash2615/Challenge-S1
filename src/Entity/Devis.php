@@ -2,70 +2,24 @@
 
 namespace App\Entity;
 
-// use ApiPlatform\Core\Annotation\ApiFilter;
-// use ApiPlatform\Core\Annotation\ApiResource;
-// use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-// use App\Controller\CreateUpdateInvoiceDevis;
 use App\Repository\DevisRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DevisRepository::class)]
-// #[
-//     ApiResource(
-//         collectionOperations: [
-//             'get' => [
-//                 'normalization_context' => ['groups' => ['allDevis:read']],
-//             ],
-//             'post' => ['controller' => CreateUpdateInvoiceDevis::class],
-//         ],
-//         itemOperations: [
-//             'get' => ['security' => 'object.getCustomer().getOwner() == user'],
-//             'put' => [
-//                 'security' => 'object.getCustomer().getOwner() == user',
-//                 'denormalization_context' => ['groups' => ['devis:update']],
-//                 'controller' => CreateUpdateInvoiceDevis::class,
-//             ],
-//             'delete' => ['security' => 'object.getCustomer().getOwner() == user'],
-//         ],
-//         subresourceOperations: [
-//             'api_customers_devis_get_subresource' => [
-//                 'security' => "is_granted('GET_SUBRESOURCE', _api_normalization_context['subresource_resources'])",
-//                 'normalization_context' => ['groups' => ['customers_devis_subresource']],
-//             ],
-//         ],
-//         denormalizationContext: ['groups' => ['devis:write', 'devis:service_write']],
-//         normalizationContext: ['groups' => ['devis:read', 'devis:service_read']],
-//         paginationClientItemsPerPage: true,
-//         paginationMaximumItemsPerPage: 500
-//     )
-// ]
-// #[ApiFilter(OrderFilter::class, properties: ["createdAt" => "desc"], arguments: ["orderParameterName" => "order"])]
 class Devis
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    #[Groups([
-        'devis:read',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private int $id;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: "devis")]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'allDevis:read'
-    ])]
     private ?Customer $customer = null;
 
     #[ORM\Column(type: "string", length: 13)]
@@ -73,82 +27,36 @@ class Devis
         pattern: "/^D-(\d{4})-(\d{6})$/",
         message: "Le chrono n'est pas au format valide (exemple: D-2021-0001)."
     )]
-    #[Groups([
-        'devis:read',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private string $chrono;
 
     #[ORM\Column(type: "string", length: 10)]
-    #[Assert\NotBlank]
     #[Assert\Choice(
         choices: ['NEW', 'SENT', 'SIGNED', 'CANCELLED'],
         message: "Le statut doit être de type 'NEW', 'SENT', 'SIGNED' ou 'CANCELLED'."
     )]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private string $status;
 
     #[ORM\Column(type: "datetime")]
     #[Assert\NotBlank]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private DateTimeInterface $validityDate;
 
     #[ORM\Column(type: "datetime")]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private DateTimeInterface $createdAt;
 
     #[ORM\Column(type: "datetime")]
     #[Assert\NotBlank]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private DateTimeInterface $workStartDate;
 
     #[ORM\Column(type: "string", length: 50)]
     #[Assert\NotBlank]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private string $workDuration;
 
     #[ORM\Column(type: "datetime")]
     #[Assert\NotBlank]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private DateTimeInterface $paymentDeadline;
 
     #[ORM\Column(type: "integer", nullable: true)]
@@ -159,57 +67,24 @@ class Devis
         min: 0,
         max: 100
     )]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private ?int $paymentDelayRate = null;
 
     #[ORM\Column(type: "boolean")]
     #[Assert\NotNull]
     #[Assert\Type('boolean')]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private bool $tvaApplicable;
 
     #[ORM\Column(type: "boolean")]
     #[Assert\NotNull]
     #[Assert\Type('boolean')]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private bool $isDraft;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private ?DateTimeInterface $sentAt = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Assert\Type(DateTimeInterface::class)]
-    #[Groups([
-        'devis:read',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private ?DateTimeInterface $signedAt = null;
 
     #[ORM\OneToMany(
@@ -218,13 +93,6 @@ class Devis
         cascade: ["persist", "remove"],
         orphanRemoval: true
     )]
-    #[Groups([
-        'devis:read',
-        'devis:write',
-        'devis:update',
-        'customers_devis_subresource',
-        'allDevis:read'
-    ])]
     private Collection $services;
 
     public function __construct()
