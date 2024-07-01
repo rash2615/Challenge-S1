@@ -1,75 +1,71 @@
+{# templates/login/signup.html.twig #}
+
 {% extends 'login/index.html.twig' %}
 
 {% block form %}
-    {# <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md"> #}
-    {# <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none lg:py4 dark:bg-gray-950 rounded-2xl bg-clip-border"> #}
-        <div class="max-w-xl mx-auto my-4 border-b-2 pb-4">	
-            <div class="flex pb-3">
-                {# <div class="flex-1"></div> #}
-
-                <div class="flex-1" id="text_progress_number_1">
-                    <div class="w-10 h-10 bg-blue mx-auto rounded-full text-lg text-white flex items-center">
-                        <span class="text-white text-center w-full">1</span>
-                    </div>
+    <div class="max-w-xl mx-auto my-4 border-b-2 pb-4">
+        <div class="flex pb-3">
+            <div class="flex-1" id="text_progress_number_1">
+                <div class="w-10 h-10 bg-blue mx-auto rounded-full text-lg text-white flex items-center">
+                    <span class="text-white text-center w-full">1</span>
                 </div>
-
-                <div class="w-1/6 align-center items-center align-middle content-center flex" id="bar_progress_number_1">
-                    <div class="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
-                        <div class="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded" style="width: 0%"></div>
-                    </div>
-                </div>
-            
-                <div class="flex-1" id="text_progress_number_2">
-                    <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
-                        <span class="text-grey-darker text-center w-full">2</span>
-                    </div>
-                </div>
-            
-                <div class="w-1/6 align-center items-center align-middle content-center flex" id="bar_progress_number_2">
-                    <div class="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
-                        <div class="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded" style="width: 0%"></div>
-                    </div>
-                </div>
-            
-                <div class="flex-1" id="text_progress_number_3">
-                    <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
-                        <span class="text-grey-darker text-center w-full">3</span>
-                    </div>
-                </div>
-            
-                {# <div class="flex-1"></div>#}
             </div>
-            
-            <div class="flex text-xs content-center text-center">
-                <div class="w-1/3">
-                    Inscription
+            <div class="w-1/6 align-center items-center align-middle content-center flex" id="bar_progress_number_1">
+                <div class="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
+                    <div class="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded" style="width: 0%"></div>
                 </div>
-                
-                <div class="w-1/3">
-                    Personal details
+            </div>
+            <div class="flex-1" id="text_progress_number_2">
+                <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
+                    <span class="text-grey-darker text-center w-full">2</span>
                 </div>
-                
-                <div class="w-1/3">
-                    Application details
-                </div>		
+            </div>
+            <div class="w-1/6 align-center items-center align-middle content-center flex" id="bar_progress_number_2">
+                <div class="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
+                    <div class="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="flex-1" id="text_progress_number_3">
+                <div class="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
+                    <span class="text-grey-darker text-center w-full">3</span>
+                </div>
             </div>
         </div>
+        <div class="flex text-xs content-center text-center">
+            <div class="w-1/3">
+                Inscription
+            </div>
+            <div class="w-1/3">
+                Personal details
+            </div>
+            <div class="w-1/3">
+                Application details
+            </div>
+        </div>
+    </div>
 
-
-        <form id="formStep1" action="/register" method="post">
-            {% include 'login/_step/step1.html.twig' %}
-
-            {% include 'login/_step/step2.html.twig' %}
-
-            {% include 'login/_step/step3.html.twig' %}
-        </form>
+    {{ form_start(registrationForm) }}
+        {% include 'login/_step/step1.html.twig' %}
+        {% include 'login/_step/step2.html.twig' %}
+        {% include 'login/_step/step3.html.twig' %}
 
         <div class="flex items-center justify-between mt-6">
             <button type="button" id="form_btn_prev" onclick="step.prev()" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-400 hidden">Précédent</button>
             <button type="button" id="form_btn_next" onclick="step.next()" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600">Suivant</button>
             <button type="submit" id="form_submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-600 hidden">S'inscrire</button>
         </div>
-    </div>
+
+        {# Display form errors #}
+        {% if registrationForm.vars.errors|length > 0 %}
+            <div class="text-red-500">
+                <ul>
+                    {% for error in registrationForm.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {{ form_end(registrationForm) }}
 
     <script>
         // JavaScript pour gérer la navigation entre les étapes avec redirection
@@ -140,9 +136,9 @@
                 this.currentStep++;
 
                 document.getElementById('form_btn_prev').classList.remove('hidden');
-                
+
                 document.getElementById('step1').classList.add('hidden');
-                
+
                 if (this.currentStep == 2) {
                     document.getElementById('step2').classList.remove('hidden');
 
