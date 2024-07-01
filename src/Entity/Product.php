@@ -52,7 +52,7 @@ class Product
     public function __construct()
     {
         $this->setCreatedAt(new \DateTime());   
-        $this->invoiceService = new ArrayCollection(); 
+        $this->invoiceService = new ArrayCollection();
     }
 
     public function getId(): ?int

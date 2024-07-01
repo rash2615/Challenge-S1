@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Devis;
 use App\Entity\InvoiceService;
+use App\Entity\InvoicesToken;
 use App\Form\DevisType;
 use App\Repository\DevisRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\ProductRepository;
+use App\Repository\InvoicesTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 use App\Service\PDFGeneratorService;
+use App\Service\SendMailService;
 
 #[Route('/devis')]
 class DevisController extends AbstractController
@@ -64,6 +67,7 @@ class DevisController extends AbstractController
             
             $devis->setStatus('NEW');
             $devis->setChrono('D-' . date('Y') . '-' . substr(hash('crc32', date('Y-m-d H:i:s')), 0, 6));
+            $devis->setUsers($this->getUser());
 
             $entityManager->persist($devis);
 
@@ -163,5 +167,64 @@ class DevisController extends AbstractController
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="devis-"' . $devis->getChrono() . '".pdf"'
         ]);
+    }
+
+    #[Route('/{id}/pdf/show', name: 'app_invoice_pdf_show', methods: ['GET'])]
+    public function show(Request $request, Devis $devis, PDFGeneratorService $pdfGenerator, InvoicesTokenRepository $invoicesTokenRepository): Response
+    {
+        // vérifier le token pour accedeer a la facture
+        $token = $request->query->get('token');
+
+        $access = $invoicesTokenRepository->createQueryBuilder('it')
+                ->where('it.token = :token')
+                ->andWhere('it.devis = :devis')
+                ->setParameter('token', $token)
+                ->setParameter('devis', $devis)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+        if (!$access) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $html = $this->renderView('dashboard/devis/pdf.html.twig', [
+            'devis' => $devis
+        ]);
+
+        $pdf = $pdfGenerator->output($html);
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="facture-"' . $devis->getChrono() . '".pdf"'
+        ]);
+    }
+
+    #[Route('/{id}/pdf/mail', name: 'app_devis_pdf_mail', methods: ['GET'])]
+    public function mail(Devis $devis, SendMailService $mail, EntityManagerInterface $entityManager): Response
+    {
+        // create new token (max: 50 characters) for the devis
+        $tokenHash = bin2hex(random_bytes(25));
+
+        $invoicesToken = new InvoicesToken();
+        $invoicesToken->setUser($this->getUser());
+        $invoicesToken->setDevis($devis);
+        $invoicesToken->setToken($tokenHash);
+
+        $entityManager->persist($invoicesToken);
+        $entityManager->flush();
+
+        // envoyer un mail
+        $mail->send(
+            "luxar@ht.com",
+            $devis->getCustomer()->getEmail(),
+            'Devis ' . $devis->getChrono(),
+            'dashboard/emails/devis.html.twig',
+            [
+                'devis' => $devis,
+                'token' => $tokenHash
+            ]
+        );
+
+        return $this->redirectToRoute('app_devis_view', ['id' => $devis->getId()]);
     }
 }
