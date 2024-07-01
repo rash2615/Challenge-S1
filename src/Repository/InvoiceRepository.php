@@ -2,13 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\Invoice;
 use App\Entity\User;
+use App\Entity\Invoice;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)
@@ -78,6 +80,78 @@ class InvoiceRepository extends ServiceEntityRepository
             'limit' => $max,
             'get' => 'page'
         ];
+    }
+
+    /*
+     * @description Retrieve the total invoices by month for the last year.
+     * 
+     * @return array
+     */
+    public function getTotalInvoicesByMonth(User $user): array
+    {
+        $totalInvoices = count($this->findBy(['users' => $user]));
+
+        $lastweekInvoices = $this->createQueryBuilder('invoices')
+            ->select('count(invoices.id) as lastweek')
+            ->where('invoices.users = :user')
+            ->andWhere('invoices.createdAt >= :lastWeek')
+            ->setParameter('user', $user)
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+        
+        $twoweeksInvoices = $this->createQueryBuilder('invoices')
+            ->select('count(invoices.id) as twoweeks')
+            ->where('invoices.users = :user')
+            ->andWhere('invoices.createdAt >= :twoWeeks')
+            ->andWhere('invoices.createdAt < :lastWeek')
+            ->setParameter('user', $user)
+            ->setParameter('twoWeeks', new \DateTime('-2 week'))
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+
+        return [
+            'total' => $totalInvoices,
+            'lastweek' => $lastweekInvoices['lastweek'],
+            'twoweeks' => $twoweeksInvoices['twoweeks'],
+        ];
+    }
+
+    /*
+     * @description Retrieve the total amount paid by month for the last year.
+     * 
+     * @return array
+     */
+    public function getTotalPaidAmountByMonth(User $user): array
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('month', 'month');
+        $rsm->addScalarResult('total_amount_paid', 'totalAmountPaid');
+
+        $sql = "
+            SELECT 
+                DATE_TRUNC('month', inv.paid_at) AS month,
+                SUM(ins.quantity * ins.unit_price) AS total_amount_paid
+            FROM 
+                invoices inv
+            JOIN 
+                invoices_services ins ON inv.id = ins.invoice_id
+            WHERE 
+                inv.paid_at IS NOT NULL
+                AND inv.paid_at >= NOW() - INTERVAL '1 year'
+                AND inv.users_id = :user
+                AND inv.status = 'PAID'
+            GROUP BY 
+                month
+            ORDER BY 
+                month
+        ";
+
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameter('user', $user);
+
+        return $query->getResult();
     }
 
     // /**

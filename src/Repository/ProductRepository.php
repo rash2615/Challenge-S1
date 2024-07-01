@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,6 +46,42 @@ class ProductRepository extends ServiceEntityRepository
             'pages' => $pages,
             'limit' => $max,
             'get' => 'page'
+        ];
+    }
+
+    /*
+     * @description Get total products by month
+     * 
+     * @return array
+     */
+    public function getTotalProductsByMonth(User $user): array
+    {
+        $totalProducts = count($this->findBy(['users' => $user]));
+
+        $lastweekProducts = $this->createQueryBuilder('product')
+            ->select('count(product.id) as lastweek')
+            ->where('product.users = :user')
+            ->andWhere('product.createdAt >= :lastWeek')
+            ->setParameter('user', $user)
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+        
+        $twoweeksProducts = $this->createQueryBuilder('product')
+            ->select('count(product.id) as twoweeks')
+            ->where('product.users = :user')
+            ->andWhere('product.createdAt >= :twoWeeks')
+            ->andWhere('product.createdAt < :lastWeek')
+            ->setParameter('user', $user)
+            ->setParameter('twoWeeks', new \DateTime('-2 week'))
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+
+        return [
+            'total' => $totalProducts,
+            'lastweek' => $lastweekProducts['lastweek'],
+            'twoweeks' => $twoweeksProducts['twoweeks'],
         ];
     }
 

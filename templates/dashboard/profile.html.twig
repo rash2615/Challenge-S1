@@ -1,0 +1,15 @@
+{% extends 'dashboard/base.html.twig' %}
+
+{% set breadcrumbs = 'Profile' %}
+{% set page_title = 'Profile' %}
+{% set sidenav_selected = 'profile' %}
+
+{% block row1 %}
+    {# {{ dump(user) }} #}
+
+    {{ form_start(profileForm) }}
+        {{ form_widget(profileForm) }}
+        <button class="btn">{{ button_label|default('Mettre à jour le profile') }}</button>
+    {{ form_end(profileForm) }}
+
+{% endblock %}
