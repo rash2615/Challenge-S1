@@ -40,10 +40,7 @@ class RegistrationController extends AbstractController
             }
             // encode the plain password
             $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
                     $form->get('password')->getData()
-                )
             );
             // dd($user);
             // Set additional fields that are not included in the form but required in the database
