@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use App\Service\PDFGeneratorService;
+
 #[Route('/invoice')]
 class InvoiceController extends AbstractController
 {
@@ -122,13 +124,28 @@ class InvoiceController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_invoice_delete', methods: ['POST'])]
-    public function delete(Request $request, Invoice $devi, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Invoice $invoice, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$devi->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($devi);
+        if ($this->isCsrfTokenValid('delete'.$invoice->getId(), $request->getPayload()->get('_token'))) {
+            $entityManager->remove($invoice);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_invoice_pdf', methods: ['GET'])]
+    public function pdf(Invoice $invoice, PDFGeneratorService $pdfGenerator): Response
+    {
+        $html = $this->renderView('dashboard/invoice/pdf.html.twig', [
+            'invoice' => $invoice
+        ]);
+
+        $pdf = $pdfGenerator->output($html);
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="facture-"' . $invoice->getChrono() . '".pdf"'
+        ]);
     }
 }

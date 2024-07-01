@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use App\Service\PDFGeneratorService;
+
 #[Route('/devis')]
 class DevisController extends AbstractController
 {
@@ -146,5 +148,20 @@ class DevisController extends AbstractController
         }
 
         return $this->redirectToRoute('app_devis_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_devis_pdf', methods: ['GET'])]
+    public function pdf(Devis $devis, PDFGeneratorService $pdfGenerator): Response
+    {
+        $html = $this->renderView('dashboard/devis/pdf.html.twig', [
+            'devis' => $devis
+        ]);
+
+        $pdf = $pdfGenerator->output($html);
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="devis-"' . $devis->getChrono() . '".pdf"'
+        ]);
     }
 }
