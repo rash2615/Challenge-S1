@@ -46,13 +46,13 @@
                     </div>
                 </div>
                 <div class="dark:text-white/80 flex justify-end max-w-full md:flex-none md:w-1/2 mt-4 mx-auto px-3 sm:mr-0 sm:my-auto">
-                    <button type="button" class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                    <a href="{{ path('app_invoice_pdf', {'id': invoice.id}) }}" target="_blanck" type="button" class="px-3 py-2 text-xs text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
                         </svg>
                         Exporter
-                    </button>
+                    </a>
                     <button type="button" class="px-3 py-2 text-sm text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-center me-2 dark:border-purple-500 dark:text-purple-500 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-800">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
                             <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
@@ -73,109 +73,109 @@
 {% endblock %}
 
 {% block modal %}
-<!-- Main modal -->
+    <!-- Main modal -->
 
-<style>
-    #background-modal {
-        display: none;
-    }
+    <style>
+        #background-modal {
+            display: none;
+        }
 
-    #background-modal:has(+ #default-modal:not(.hidden)) {
-        display: block;
-    }
+        #background-modal:has(+ #default-modal:not(.hidden)) {
+            display: block;
+        }
 
-    form:has(select#status option:checked:not([value="1"])) div#sent_at {
-        display: none;
-    }
+        form:has(select#status option:checked:not([value="1"])) div#sent_at {
+            display: none;
+        }
 
-    form:has(select#status option:checked:not([value="2"])) div#paid_at {
-        display: none;
-    }
-</style>
+        form:has(select#status option:checked:not([value="2"])) div#paid_at {
+            display: none;
+        }
+    </style>
 
-<div id="background-modal" class="bg-black/40 fixed h-full right-0 top-0 w-full z-990"></div>
-<div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-sticky w-1/3">
-    <div class="relative p-4 w-full max-w-2xl max-h-full">
-        <!-- Modal content -->
-        <form method="POST" action="{{ path('app_invoice_edit_statut', {'id': invoice.id}) }}" class="modal bg-white rounded-lg shadow dark:bg-gray-700">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white justify-center">
-                        Éditer la facture
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4">
-                    {# <p class=" #}
-                    Statut
-                    <select name="statut" id="status" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
-                        <option value="0">Nouveau</option>
-                        <option value="1">Evoyer</option>
-                        <option value="2">Signé</option>
-                        <option value="3">Annulé</option>
-                    </select>
-
-                    <div id="sent_at">
-                        <p class="m-0 p-0">Date d'envoi</p>
-                        <input type="datetime-local" name="sentAt" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
+    <div id="background-modal" class="bg-black/40 fixed h-full right-0 top-0 w-full z-990"></div>
+    <div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-sticky w-1/3">
+        <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <!-- Modal content -->
+            <form method="POST" action="{{ path('app_invoice_edit_statut', {'id': invoice.id}) }}" class="modal bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white justify-center">
+                            Éditer la facture
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
                     </div>
-                    <div id="paid_at">
-                        <p class="m-0 p-0">Date de signature</p>
-                        <input type="datetime-local" name="paidAt" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
+                    <!-- Modal body -->
+                    <div class="p-4 md:p-5 space-y-4">
+                        {# <p class=" #}
+                        Statut
+                        <select name="statut" id="status" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
+                            <option value="0">Nouveau</option>
+                            <option value="1">Evoyer</option>
+                            <option value="2">Payer</option>
+                            <option value="3">Annuler</option>
+                        </select>
+
+                        <div id="sent_at">
+                            <p class="m-0 p-0">Date d'envoi</p>
+                            <input type="datetime-local" name="sentAt" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
+                        </div>
+                        <div id="paid_at">
+                            <p class="m-0 p-0">Date de signature</p>
+                            <input type="datetime-local" name="paidAt" class="w-full p-2 border border-gray-200 rounded-lg dark:border-gray-600">
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <input data-modal-hide="default-modal" type="submit" id="submit" value="Mettre à jour" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     </div>
                 </div>
-                <!-- Modal footer -->
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <input data-modal-hide="default-modal" type="submit" id="submit" value="Mettre à jour" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<script type="text/javascript" defer>
-    window.openModal = function(modalId) {
-        document.getElementById(modalId).classList.remove('hidden')
-        document.getElementsByTagName('body')[0].classList.add('overflow-y-hidden')
-    }
-
-    window.closeModal = function(modalId) {
-        document.getElementById(modalId).classList.add('hidden')
-        document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
-    }
-
-    // Close all modals when press ESC
-    // TODO: Close only the last modal opened
-    document.onkeydown = function(event) {
-        event = event || window.event;
-        if (event.keyCode === 27) {
-            console.log('ESC key pressed')
-            document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
-            let modals = document.getElementsByClassName('modal');
-            Array.prototype.slice.call(modals).forEach(i => {
-                i.classList.add('hidden')
-            })
+    <script type="text/javascript" defer>
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden')
+            document.getElementsByTagName('body')[0].classList.add('overflow-y-hidden')
         }
-    };
 
-    document.addEventListener('click', function(event) {
-        if (event.target.dataset.modalHide !== undefined) {
-            document.getElementById(event.target.dataset.modalHide)?.classList.add('hidden')
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden')
             document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
         }
-        if (event.target.tagName === 'svg' || event.target.tagName === 'span') {
-            document.getElementById(event.target.parentElement.dataset.modalHide)?.classList.add('hidden')
-            document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
-        }
-    });
-</script>
+
+        // Close all modals when press ESC
+        // TODO: Close only the last modal opened
+        document.onkeydown = function(event) {
+            event = event || window.event;
+            if (event.keyCode === 27) {
+                console.log('ESC key pressed')
+                document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
+                let modals = document.getElementsByClassName('modal');
+                Array.prototype.slice.call(modals).forEach(i => {
+                    i.classList.add('hidden')
+                })
+            }
+        };
+
+        document.addEventListener('click', function(event) {
+            if (event.target.dataset.modalHide !== undefined) {
+                document.getElementById(event.target.dataset.modalHide)?.classList.add('hidden')
+                document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
+            }
+            if (event.target.tagName === 'svg' || event.target.tagName === 'span') {
+                document.getElementById(event.target.parentElement.dataset.modalHide)?.classList.add('hidden')
+                document.getElementsByTagName('body')[0].classList.remove('overflow-y-hidden')
+            }
+        });
+    </script>
 {% endblock %}
 
 {% block row2 %}

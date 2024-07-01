@@ -24,9 +24,10 @@ vendor/*
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
-package-lock.json
 .log
 ###< symfony/webpack-encore-bundle ###
 
-# Ignore Composer's lock
-.lock
+# Ignore lock's file for composer, npm
+/composer.lock
+/package-lock.json
+/symfony.lock
