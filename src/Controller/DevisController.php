@@ -169,7 +169,7 @@ class DevisController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/pdf/show', name: 'app_invoice_pdf_show', methods: ['GET'])]
+    #[Route('/{id}/pdf/show', name: 'app_devis_pdf_show', methods: ['GET'])]
     public function show(Request $request, Devis $devis, PDFGeneratorService $pdfGenerator, InvoicesTokenRepository $invoicesTokenRepository): Response
     {
         // vérifier le token pour accedeer a la facture

@@ -22,7 +22,7 @@ final class Version20240701131635 extends AbstractMigration
         // // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE "invoices_token" ( "id" serial NOT NULL, PRIMARY KEY ("id"), "user_id" integer NOT NULL, "invoice_id" integer NULL, "devis_id" integer NULL, "token" character varying(50) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL)');
         $this->addSql('ALTER TABLE "invoices_token" ADD CONSTRAINT "FK_2D3A3D3A76ED395" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE');
-        $this->addSql('ALTER TABLE "invoices_token" ADD CONSTRAINT "FK_2D3A3D3A76ED396" FOREIGN KEY ("invoices_id") REFERENCES "invoices" ("id") ON DELETE CASCADE ON UPDATE CASCADE');
+        $this->addSql('ALTER TABLE "invoices_token" ADD CONSTRAINT "FK_2D3A3D3A76ED396" FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id") ON DELETE CASCADE ON UPDATE CASCADE');
         $this->addSql('ALTER TABLE "invoices_token" ADD CONSTRAINT "FK_2D3A3D3A76ED397" FOREIGN KEY ("devis_id") REFERENCES "devis" ("id") ON DELETE CASCADE ON UPDATE CASCADE');
     }
 
