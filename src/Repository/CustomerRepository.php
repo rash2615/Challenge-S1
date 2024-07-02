@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -46,6 +47,38 @@ class CustomerRepository extends ServiceEntityRepository
             'pages' => $pages,
             'limit' => $max,
             'get' => 'page'
+        ];
+    }
+
+    public function getTotalCustomersByMonth(User $user): array
+    {
+        $totalCus = count($this->findBy(['owner' => $user]));
+
+        $lastweekCus = $this->createQueryBuilder('customer')
+            ->select('count(customer.id) as lastweek')
+            ->where('customer.owner = :owner')
+            ->andWhere('customer.createdAt >= :lastWeek')
+            ->setParameter('owner', $user)
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+
+        $twoweeksCus = $this->createQueryBuilder('customer')
+            ->select('count(customer.id) as twoweeks')
+            ->where('customer.owner = :owner')
+            ->andWhere('customer.createdAt >= :twoWeeks')
+            ->andWhere('customer.createdAt < :lastWeek')
+            ->setParameter('owner', $user)
+            ->setParameter('twoWeeks', new \DateTime('-2 week'))
+            ->setParameter('lastWeek', new \DateTime('-1 week'))
+            ->getQuery()
+        ->getSingleResult();
+
+        // return $dql->getQuery()->getResult();
+        return [
+            'total' => $totalCus,
+            'lastweek' => $lastweekCus['lastweek'],
+            'twoweeks' => $twoweeksCus['twoweeks'],
         ];
     }
 

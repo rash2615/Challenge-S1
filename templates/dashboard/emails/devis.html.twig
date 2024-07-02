@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Devis</title>
+    </head>
+    <body>
+        <h1>Devis</h1>
+
+        <p>
+            Bonjour {{ devis.users.firstname }} {{ devis.users.lastname }},
+
+            Un devis a été créé pour vous.
+        </p>
+
+        <a href="{{ app.request.getSchemeAndHttpHost() }}{{ path('app_devis_pdf_show', {'id': devis.id, 'token': token}) }}">Accéder au Devis</a>
+    </body>
+</html>

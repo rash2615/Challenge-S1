@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ResetPassword;
 use App\Form\ResetPasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Repository\UserRepository;
@@ -22,6 +23,7 @@ class LoginController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
+
             return $this->redirectToRoute('app_dashboard');
         }
 
@@ -57,20 +59,38 @@ class LoginController extends AbstractController
             $user = $UserRepository->findOneByEmail($form->get('email')->getData());
 
             if($user){
-                $token = $tokenGenerator->generateToken();
-                $user->setResetToken($token);
+                // $token = $tokenGenerator->generateToken();
+                // $user->setResetToken($token);
+
+                // users_reset_password
+
+                // Colonne	Type	Commentaire
+                // id	integer Incrément automatique [nextval('users_reset_password_id_seq')]	
+                // user_id	integer	
+                // token	character varying(255)	
+                // requested_at	timestamp(0)	
+                // expires_at	timestamp(0)
+
+                $resetPassword = new ResetPassword();
+                $resetPassword->setUser($user);
+                $entityManager->persist($resetPassword);
+
+                // $resetPassword->setToken($token);
+                // $resetPassword->setRequestedAt(new \DateTimeImmutable());
+                // $resetPassword->setExpiresAt(new \DateTimeImmutable('+1 hour'));
+
                 $entityManager->persist($user);
                 $entityManager->flush();
 
-                $url = $this->generateUrl('reset_pass', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
+                $url = $this->generateUrl('reset_pass', ['token' => $resetPassword->getToken()], UrlGeneratorInterface::ABSOLUTE_URL);
                 
                 $context = compact('url', 'user');
 
                 $mail->send(
-                    'no-reply@e-commerce.fr',
+                    'no-reply@luxar.space',
                     $user->getEmail(),
                     'Réinitialisation de mot de passe',
-                    'password_reset',
+                    'emails/password_reset.html.twig',
                     $context
                 );
 
@@ -91,27 +111,24 @@ class LoginController extends AbstractController
     public function resetPass(
         string $token,
         Request $request,
-        UserRepository $UserRepository,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
     ): Response
     {
-        $user = $UserRepository->findOneByResetToken($token);
+        $resetPassword = $entityManager->getRepository(ResetPassword::class)->findOneByToken($token);
         
-        if($user){
+        if($resetPassword->getUser())
+        {
             $form = $this->createForm(ResetPasswordFormType::class);
 
             $form->handleRequest($request);
 
             if($form->isSubmitted() && $form->isValid()){
 
-                $user->setResetToken('');
-                $user->setPassword(
-                    $passwordHasher->hashPassword(
-                        $user,
-                        $form->get('password')->getData()
-                    )
-                );
+                $user = $resetPassword->getUser();
+
+                $entityManager->remove($resetPassword);
+
+                $user->setPassword($form->get('password')->getData());
                 $entityManager->persist($user);
                 $entityManager->flush();
 

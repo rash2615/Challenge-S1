@@ -10,4 +10,3 @@ import "./styles/app.css";
 import "./styles/tailwind.css";
 import "./styles/nucleo-icons.css";
 import "./styles/nucleo-svg.css";
-import "./styles/tooltips.css";

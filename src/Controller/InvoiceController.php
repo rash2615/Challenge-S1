@@ -3,15 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Invoice;
+use App\Entity\InvoiceService;
+use App\Entity\InvoicesToken;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\ProductRepository;
+use App\Repository\InvoicesTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
+use App\Service\PDFGeneratorService;
+use App\Service\SendMailService;
 
 #[Route('/invoice')]
 class InvoiceController extends AbstractController
@@ -30,7 +36,7 @@ class InvoiceController extends AbstractController
             'page' => $listInvoice["page"],
             'pages' => $listInvoice["pages"],
             'get' => 'page',
-            'limit' => $listInvoice["limit"]
+            'limit' => $listInvoice["limit"],
         ]);
     }
 
@@ -62,9 +68,22 @@ class InvoiceController extends AbstractController
             $invoice->setStatus('NEW');
             $invoice->setChrono('F-' . date('Y') . '-' . substr(hash('crc32', date('Y-m-d H:i:s')), 0, 6));
             $invoice->setServiceDoneAt(new \DateTime());
+            $invoice->setUsers($this->getUser());
 
             // dd($invoice);
             $entityManager->persist($invoice);
+
+            foreach ($request->get('_product') as $key => $value) {
+                $is = new InvoiceService();
+
+                $is->setProduct($productRepository->find($value));
+                $is->setQuantity($request->get('_quantity')[$key]);
+                $is->setUnitPrice($request->get('_price')[$key]);
+                $is->setInvoice($invoice);
+
+                $entityManager->persist($is);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
@@ -74,7 +93,7 @@ class InvoiceController extends AbstractController
             'invoice' => $invoice,
             'form' => $form,
 
-            'list_product' => $getAllProduct
+            'list_product' => $getAllProduct,
         ]);
     }
 
@@ -82,7 +101,7 @@ class InvoiceController extends AbstractController
     public function edit(Invoice $invoice): Response
     {
         return $this->render('dashboard/invoice/view.html.twig', [
-            'invoice' => $invoice
+            'invoice' => $invoice,
         ]);
     }
 
@@ -122,13 +141,87 @@ class InvoiceController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_invoice_delete', methods: ['POST'])]
-    public function delete(Request $request, Invoice $devi, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Invoice $invoice, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$devi->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($devi);
+        if ($this->isCsrfTokenValid('delete'.$invoice->getId(), $request->getPayload()->get('_token'))) {
+            $entityManager->remove($invoice);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_invoice_pdf', methods: ['GET'])]
+    public function pdf(Invoice $invoice, PDFGeneratorService $pdfGenerator): Response
+    {
+        $html = $this->renderView('dashboard/invoice/pdf.html.twig', [
+            'invoice' => $invoice
+        ]);
+
+        $pdf = $pdfGenerator->output($html);
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="facture-"' . $invoice->getChrono() . '".pdf"'
+        ]);
+    }
+
+    #[Route('/{id}/pdf/show', name: 'app_invoice_pdf_show', methods: ['GET'])]
+    public function show(Request $request, Invoice $invoice, PDFGeneratorService $pdfGenerator, InvoicesTokenRepository $invoicesTokenRepository): Response
+    {
+        // vérifier le token pour accedeer a la facture
+        $token = $request->query->get('token');
+
+        $access = $invoicesTokenRepository->createQueryBuilder('it')
+                ->where('it.token = :token')
+                ->andWhere('it.invoice = :invoice')
+                ->setParameter('token', $token)
+                ->setParameter('invoice', $invoice)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+        if (!$access) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $html = $this->renderView('dashboard/invoice/pdf.html.twig', [
+            'invoice' => $invoice
+        ]);
+
+        $pdf = $pdfGenerator->output($html);
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="facture-"' . $invoice->getChrono() . '".pdf"'
+        ]);
+    }
+
+    #[Route('/{id}/pdf/mail', name: 'app_invoice_pdf_mail', methods: ['GET'])]
+    public function mail(Invoice $invoice, SendMailService $mail, EntityManagerInterface $entityManager): Response
+    {
+        // create new token (max: 50 characters) for the devis
+        $tokenHash = bin2hex(random_bytes(25));
+
+        $invoicesToken = new InvoicesToken();
+        $invoicesToken->setUser($this->getUser());
+        $invoicesToken->setInvoices($invoice);
+        $invoicesToken->setToken($tokenHash);
+
+        $entityManager->persist($invoicesToken);
+        $entityManager->flush();
+
+        // envoyer un mail
+        $mail->send(
+            "no-reply@luxar.space",
+            $invoice->getCustomer()->getEmail(),
+            'Devis ' . $invoice->getChrono(),
+            'dashboard/emails/invoice.html.twig',
+            [
+                'invoice' => $invoice,
+                'token' => $tokenHash
+            ]
+        );
+
+        return $this->redirectToRoute('app_invoice_view', ['id' => $invoice->getId()]);
     }
 }

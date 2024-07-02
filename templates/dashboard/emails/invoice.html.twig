@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>facture</title>
+    </head>
+    <body>
+        <h1>facture</h1>
+
+        <p>
+            Bonjour {{ invoice.users.firstname }} {{ invoice.users.lastname }},
+
+            Une facture a été créée pour vous.
+        </p>
+
+        <a href="{{ app.request.getSchemeAndHttpHost() }}{{ path('app_invoice_pdf_show', {'id': invoice.id, 'token': token}) }}">Accéder a la facture</a>
+    </body>
+</html>

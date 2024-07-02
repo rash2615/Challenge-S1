@@ -88,6 +88,10 @@ class Invoice
     )]
     private Collection $services;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable:true)]
+    private $users;
+
     public function __construct()
     {
         $this->setCreatedAt(new \DateTime());
@@ -239,6 +243,18 @@ class Invoice
     public function setServiceDoneAt(DateTimeInterface $serviceDoneAt): self
     {
         $this->serviceDoneAt = $serviceDoneAt;
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): static
+    {
+        $this->users = $users;
 
         return $this;
     }
