@@ -35,7 +35,7 @@ class CustomerController extends AbstractController
             'limit' => $listCustomer["limit"],
 
             'customer' => $customer,
-            'form' => $form
+            'form' => $form,
         ]);
     }
 

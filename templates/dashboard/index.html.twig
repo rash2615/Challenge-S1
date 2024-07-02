@@ -35,7 +35,7 @@
             {% endblock %}
         {% endembed %}
 
-        <!-- card3 -->
+        <!-- card2 -->
         {% embed  '_partials/_cards.html.twig' %}
             {% block title %}
                 New Customers
@@ -64,28 +64,30 @@
             {% endblock %}
         {% endembed %}
 
-        <!-- card2 -->
+        <!-- card3 -->
         {% embed  '_partials/_cards.html.twig' %}
             {% block title %}
-                Today's Users
+                New Invoice
             {% endblock %}
 
             {# short #}
             {% block short %}
-                2,300
+                {{ invoicesWidget.total }}
             {% endblock %}
 
             {# descritpion #}
             {% block descritpion %}
-                <span class="text-sm font-bold leading-normal text-emerald-500">+3%</span>
-                                    since last week
+                <span class="text-sm font-bold leading-normal text-emerald-500">
+                    +{{invoicesWidget.lastweekPercentage}}%
+                </span>
+                since last week
             {% endblock %}
 
             {# icon #}
             {% block icon %}
                 <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-red-600 to-orange-600">
-                                <i class="ni leading-none ni-world text-lg relative top-3.5 text-white"></i>
-                            </div>
+                    <i class="ni leading-none ni-world text-lg relative top-3.5 text-white"></i>
+                </div>
             {% endblock %}
         {% endembed %}
 
@@ -120,17 +122,110 @@
     <div class="flex flex-wrap mt-6 -mx-3">
         {% embed '_partials/_chart.html.twig' %}
             {% block title %}
-                Sales overview
+                Total Paid Amount
             {% endblock %}
 
             {% block description %}
-                <i class="fa fa-arrow-up text-emerald-500"></i>
+                {# <i class="fa fa-arrow-up text-emerald-500"></i>
                 <span class="font-semibold">4% more</span>
-                in 2021
+                in 2021 #}
             {% endblock %}
 
             {% block chart %}
                 <canvas id="chart-line" height="300"></canvas>
+
+                <script defer type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx1 = document.getElementById("chart-line").getContext("2d");
+
+                        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+
+                        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+                        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+                        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+                        new Chart(ctx1, {
+                            type: "line",
+                            data: {
+                                labels: [
+                                    {% for result in getTotalPaidAmountByMonth %}
+                                        '{{ result.month|date('F Y') }}',
+                                    {% endfor %}
+                                ],
+                                datasets: [{
+                                    label: 'Total Paid Amount',
+                                    tension: 0.4,
+                                    borderWidth: 0,
+                                    pointRadius: 0,
+                                    borderColor: "#5e72e4",
+                                    backgroundColor: gradientStroke1,
+                                    borderWidth: 3,
+                                    fill: true,
+                                    data: [
+                                        {% for result in getTotalPaidAmountByMonth %}
+                                            {{ result.totalAmountPaid }},
+                                        {% endfor %}
+                                    ],
+                                    maxBarThickness: 6
+                                }],
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false,
+                                    }
+                                },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index',
+                                },
+                                scales: {
+                                    y: {
+                                        grid: {
+                                            drawBorder: false,
+                                            display: true,
+                                            drawOnChartArea: true,
+                                            drawTicks: false,
+                                            borderDash: [5, 5]
+                                        },
+                                        ticks: {
+                                            display: true,
+                                            padding: 10,
+                                            color: '#fbfbfb',
+                                            font: {
+                                                size: 11,
+                                                family: "Open Sans",
+                                                style: 'normal',
+                                                lineHeight: 2
+                                            },
+                                        }
+                                    },
+                                    x: {
+                                        grid: {
+                                            drawBorder: false,
+                                            display: false,
+                                            drawOnChartArea: false,
+                                            drawTicks: false,
+                                            borderDash: [5, 5]
+                                        },
+                                        ticks: {
+                                            display: true,
+                                            color: '#ccc',
+                                            padding: 20,
+                                            font: {
+                                                size: 11,
+                                                family: "Open Sans",
+                                                style: 'normal',
+                                                lineHeight: 2
+                                            },
+                                        }
+                                    },
+                                },
+                            },
+                        });
+                    });
+                </script>
             {% endblock %}
         {% endembed %}
 
@@ -202,7 +297,7 @@
 {% endblock %}
 
 {% block row3 %}
-    <div class="flex flex-wrap mt-6 -mx-3">
+    {# <div class="flex flex-wrap mt-6 -mx-3">
         <div class="w-full max-w-full px-3 mt-0 mb-6 lg:mb-0 lg:w-7/12 lg:flex-none">
             <div class="relative flex flex-col min-w-0 break-words bg-white border-0 border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl dark:bg-gray-950 border-black-125 rounded-2xl bg-clip-border">
                 <div class="p-4 pb-0 mb-0 rounded-t-4">
@@ -544,5 +639,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> #}
 {% endblock %}

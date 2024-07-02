@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use App\Repository\DevisRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -94,6 +95,10 @@ class Devis
         orphanRemoval: true
     )]
     private Collection $services;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable:true)]
+    private $users;
 
     public function __construct()
     {
@@ -258,6 +263,18 @@ class Devis
     public function setSignedAt(?DateTimeInterface $signedAt): self
     {
         $this->signedAt = $signedAt;
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): static
+    {
+        $this->users = $users;
 
         return $this;
     }

@@ -4,46 +4,68 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IsTrue;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+// use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
+            ->add('firstname', TextType::class, [
+                'label' => 'Prénom',
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
+            ->add('lastname', TextType::class, [
+                'label' => 'Nom',
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Adresse email',
+            ])
+            // ->add('plainPassword', RepeatedType::class, [
+            //     'type' => PasswordType::class,
+            //     'first_options' => ['label' => 'Mot de passe'],
+            //     'second_options' => ['label' => 'Confirmation du mot de passe'],
+            //     'mapped' => false,
+            // ])
+            ->add('password', PasswordType::class, [
+                'label' => 'Mot de passe',
                 'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
             ])
-        ;
+            // ->add('confirmplainPassword', PasswordType::class, [
+            //     'label' => 'Confirmation du mot de passe',
+            //     'attr' => ['autocomplete' => 'new-password'],
+            // ])
+            ->add('phone', TextType::class, [
+                'label' => 'Téléphone',
+            ])
+            ->add('phone', TextType::class, [
+                'label' => 'Téléphone',
+            ])
+            ->add('businessName', TextType::class, [
+                'label' => 'Nom de la société',
+            ])
+            ->add('address', TextType::class, [
+                'label' => 'Adresse de la société',
+            ])
+            ->add('siret', TextType::class, [
+                'label' => 'Numéro de SIRET',
+            ])
+            ->add('tvaNumber', TextType::class, [
+                'label' => 'Numéro de TVA',
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Ville',
+            ])
+            ->add('postalCode', TextType::class, [
+                'label' => 'Code Postal',
+            ])
+            ->add('country', TextType::class, [
+                'label' => 'Pays',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
