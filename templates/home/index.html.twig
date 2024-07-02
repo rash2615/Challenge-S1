@@ -1,45 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxar</title>
-    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
-</head>
-<body class="bg-gray-100 text-gray-900 font-sans">
-    <!-- Header -->
-    <header class="bg-white shadow">
-        <div class="container mx-auto flex justify-between items-center py-6 px-4 md:px-6">
-            <div class="text-lg font-bold">Luxar</div>
-            <nav class="flex space-x-4">
-                <a href="/login" class="text-blue-500 hover:underline">Se connecter</a>
-                <a href="/register" class="text-blue-500 hover:underline">S'inscrire</a>
-            </nav>
-        </div>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png" />
+        <link rel="icon" type="image/png" href="/Luxar.png" />
+        <title>LUXAR</title>
+
+        <!--     Fonts and icons     -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        <!-- Font Awesome Icons -->
+        <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body class="m-0 font-sans antialiased font-normal bg-white text-start text-base leading-default text-slate-500">
+        {% include "/home/_partials/navbar.html.twig" %}
 
     <!-- Main Content -->
     <main class="container mx-auto mt-10 px-4 md:px-6">
-        <section class="text-center">
-            <h1 class="text-4xl font-bold text-blue-600">Gérer les devis et factures facilement</h1>
-            <p class="mt-4 text-lg text-gray-700">Luxar est une plateforme qui permet de simplifier la gestion de vos devis et factures. Gagnez du temps et concentrez-vous sur l'essentiel.</p>
-            <div class="mt-8">
-                <a href="/login" class="bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold shadow-md hover:bg-blue-600">Commencer</a>
-            </div>
-        </section>
-
-        <section class="mt-16">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold mb-4">Créez des devis en quelques clics</h2>
-                    <p class="text-gray-700">Avec Luxar, la création de devis n'a jamais été aussi simple. Personnalisez vos devis et envoyez-les directement à vos clients.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold mb-4">Gérez vos factures efficacement</h2>
-                    <p class="text-gray-700">Suivez vos factures, envoyez des rappels de paiement et obtenez une vue d'ensemble de vos finances en un clin d'œil.</p>
-                </div>
-            </div>
-        </section>
+        {% include "/home/_partials/introduction.html.twig" %}<br><br>
+        {% include "/home/_partials/presentation.html.twig" %}
+        {% include "/home/_partials/forfait.html.twig" %}
     </main>
 
     <!-- Footer -->

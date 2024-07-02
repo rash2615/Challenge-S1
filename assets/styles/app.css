@@ -16,6 +16,14 @@ article,aside,footer,header,nav,section {
     display: block
 }
 
+footer {
+    background-color: #C4CAF3;
+    padding: 2rem;
+    text-align: center;
+    color: #000000;
+    border-radius: 10px 10px 0px 0px;
+}
+
 h1 {
     font-size: 2em;
     margin: .67em 0
