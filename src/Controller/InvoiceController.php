@@ -36,7 +36,7 @@ class InvoiceController extends AbstractController
             'page' => $listInvoice["page"],
             'pages' => $listInvoice["pages"],
             'get' => 'page',
-            'limit' => $listInvoice["limit"]
+            'limit' => $listInvoice["limit"],
         ]);
     }
 
@@ -93,7 +93,7 @@ class InvoiceController extends AbstractController
             'invoice' => $invoice,
             'form' => $form,
 
-            'list_product' => $getAllProduct
+            'list_product' => $getAllProduct,
         ]);
     }
 
@@ -101,7 +101,7 @@ class InvoiceController extends AbstractController
     public function edit(Invoice $invoice): Response
     {
         return $this->render('dashboard/invoice/view.html.twig', [
-            'invoice' => $invoice
+            'invoice' => $invoice,
         ]);
     }
 
@@ -212,7 +212,7 @@ class InvoiceController extends AbstractController
 
         // envoyer un mail
         $mail->send(
-            "luxar@ht.com",
+            "no-reply@luxar.space",
             $invoice->getCustomer()->getEmail(),
             'Devis ' . $invoice->getChrono(),
             'dashboard/emails/invoice.html.twig',

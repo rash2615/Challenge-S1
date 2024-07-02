@@ -17,20 +17,6 @@ class ProfileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // - firstname
-        // - lastname
-        // - email
-        // - password
-        // - phone
-        // - businessName
-        // - siret
-        // - tvaNumber
-        // - address
-        // - city
-        // - postalCode
-        // - country
-        // - isVerified = false si mail change
-
         $builder
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
@@ -56,15 +42,6 @@ class ProfileType extends AbstractType
                     'required' => false
                 ]
             ])
-            ->add('password', TextType::class, [
-                'label' => 'Mot de passe',
-                'attr' => [
-                    'placeholder' => 'Mot de passe',
-                    'required' => false,
-                    'pattern' => '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$',
-                    'value' => '',
-                ]
-            ])
             ->add('phone', TextType::class, [
                 'label' => 'Téléphone',
                 'attr' => [
@@ -73,28 +50,28 @@ class ProfileType extends AbstractType
                     'title' => 'Entrez un numéro de téléphone valide'
                 ]
             ])
-            ->add('businessName', TextType::class, [
-                'label' => 'Nom de l\'entreprise',
-                'attr' => [
-                    'placeholder' => 'Nom de l\'entreprise',
-                    'required' => false
-                ]
-            ])
-            ->add('siret', IntegerType::class, [
-                'label' => 'Siret',
-                'attr' => [
-                    'placeholder' => 'Siret',
-                    'pattern' => '[0-9]{14}',
-                    'required' => false
-                ]
-            ])
-            ->add('tvaNumber', TextType::class, [
-                'label' => 'Numéro de TVA',
-                'attr' => [
-                    'placeholder' => 'Numéro de TVA',
-                    'required' => false
-                ]
-            ])
+            // ->add('businessName', TextType::class, [
+            //     'label' => 'Nom de l\'entreprise',
+            //     'attr' => [
+            //         'placeholder' => 'Nom de l\'entreprise',
+            //         'required' => false
+            //     ]
+            // ])
+            // ->add('siret', IntegerType::class, [
+            //     'label' => 'Siret',
+            //     'attr' => [
+            //         'placeholder' => 'Siret',
+            //         'pattern' => '[0-9]{14}',
+            //         'required' => false
+            //     ]
+            // ])
+            // ->add('tvaNumber', TextType::class, [
+            //     'label' => 'Numéro de TVA',
+            //     'attr' => [
+            //         'placeholder' => 'Numéro de TVA',
+            //         'required' => false
+            //     ]
+            // ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse',
                 'attr' => [

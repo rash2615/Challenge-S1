@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileType;
+use App\Form\ProfilePassType;
+// use App\Form\ProfileType;
 use App\Repository\CustomerRepository;
 use App\Repository\ProductRepository;
 use App\Repository\InvoiceRepository;
@@ -58,9 +60,13 @@ class DashboardController extends AbstractController
         $profileForm = $this->createForm(ProfileType::class, $user);
         $profileForm->handleRequest($request);
 
+        $ProfilePassForm = $this->createForm(ProfilePassType::class, $user);
+        $ProfilePassForm->handleRequest($request);
+
         return $this->render('dashboard/profile.html.twig', [
             'user' => $user,
             'profileForm' => $profileForm,
+            'profilePassForm' => $ProfilePassForm
         ]);
     }
 
@@ -83,5 +89,38 @@ class DashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('app_dashboard_profile', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/profile/edit/password', name: 'app_dashboard_profile_edit_password', methods: ['POST'])]
+    public function editPassword(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user_pass_hash = $this->getUser()->getPassword();
+
+        $user_id = $request->query->get('id');
+
+        if ($user_id != $this->getUser()->getId()) {
+            return $this->redirectToRoute('app_dashboard_profile', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $form = $this->createForm(ProfilePassType::class, $this->getUser());
+        $form->handleRequest($request);
+
+        if (!password_verify($request->getPayload()->get('Currentpassword'), $user_pass_hash))
+        {
+            $this->addFlash('error', 'Current password is not valid');
+            return $this->redirectToRoute('app_dashboard_profile', [], Response::HTTP_SEE_OTHER);
+        }
+        if ($form->get('password')->getData() != $request->getPayload()->get('Confirmpassword'))
+        {
+            $this->addFlash('error', 'New password and confirm password are not the same');
+            return $this->redirectToRoute('app_dashboard_profile', [], Response::HTTP_SEE_OTHER);
+        }
+        
+        $this->getUser()->setPassword($form->get('password')->getData());
+
+        $entityManager->persist($this->getUser());
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_dashboard_profile', [], Response::HTTP_SEE_OTHER);
     }
 }

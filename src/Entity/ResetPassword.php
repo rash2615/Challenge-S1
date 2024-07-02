@@ -94,6 +94,6 @@ class ResetPassword
     {
         $this->setToken(sha1(random_bytes(rand(8, 10))));
         $this->setRequestedAt(new DateTimeImmutable());
-        $this->setExpiresAt($this->getRequestedAt()->add(new DateInterval('PT2H')));
+        $this->setExpiresAt($this->getRequestedAt()->add(new DateInterval('PT1H')));
     }
 }

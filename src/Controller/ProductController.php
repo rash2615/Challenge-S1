@@ -37,7 +37,7 @@ class ProductController extends AbstractController
             'limit' => $listProduct["limit"],
 
             'product' => $product,
-            'form' => $form
+            'form' => $form,
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,14 +12,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+
+use App\Repository\UserRepository;
+
+// emailVerifier
+// use Symfo
+
 class RegistrationController extends AbstractController
 {
-    // private EmailVerifier $emailVerifier;
-
-    // public function __construct(EmailVerifier $emailVerifier)
-    // {
-    //     $this->emailVerifier = $emailVerifier;
-    // }
+    public function __construct(private EmailVerifier $emailVerifier)
+    {
+    }
 
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
@@ -27,10 +35,9 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        // dd($form, $request);
         if ($form->isSubmitted() && $form->isValid()) {
             $confirmpassword= $request->getPayload()->get('confirmpassword');
-            // dd($confirmpassword);
+
             //plainpassword = confirmplainpassword
             if (
                 $form->get('password')->getData() !== $confirmpassword
@@ -38,11 +45,10 @@ class RegistrationController extends AbstractController
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas');
                 return $this->redirectToRoute('app_register');
             }
+
             // encode the plain password
-            $user->setPassword(
-                    $form->get('password')->getData()
-            );
-            // dd($user);
+            $user->setPassword($form->get('password')->getData());
+
             // Set additional fields that are not included in the form but required in the database
             $user->setRoles(['ROLE_USER']);
             $user->setCreatedAt(new \DateTime());
@@ -52,13 +58,13 @@ class RegistrationController extends AbstractController
 
             // Commenting out email verification logic
             // generate a signed url and email it to the user
-            // $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-            //     (new TemplatedEmail())
-            //         ->from(new Address('contact@luxar.com', 'luxar'))
-            //         ->to($user->getEmail())
-            //         ->subject('Please Confirm your Email')
-            //         ->htmlTemplate('emails/confirmation_email.html.twig')
-            // );
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('contact@luxar.com', 'luxar'))
+                    ->to($user->getEmail())
+                    ->subject('Please Confirm your Email')
+                    ->htmlTemplate('emails/confirmation_email.html.twig')
+            );
 
             // do anything else you need here, like send an email
 
@@ -72,9 +78,21 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
+    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $id = $request->query->get('id'); // retrieve the user id from the url
+
+        // Verify the user id exists and is not null
+        if (null === $id) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $user = $userRepository->find($id);
+
+        // Ensure the user exists in persistence
+        if (null === $user) {
+            return $this->redirectToRoute('app_home');
+        }
 
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());

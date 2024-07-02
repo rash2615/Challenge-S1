@@ -36,7 +36,7 @@ class DevisController extends AbstractController
             'page' => $listDevis["page"],
             'pages' => $listDevis["pages"],
             'get' => 'page',
-            'limit' => $listDevis["limit"]
+            'limit' => $listDevis["limit"],
         ]);
     }
 
@@ -96,7 +96,7 @@ class DevisController extends AbstractController
             'devis' => $devis,
             'form' => $form,
 
-            'list_product' => $getAllProduct
+            'list_product' => $getAllProduct,
         ]);
     }
 
@@ -104,7 +104,7 @@ class DevisController extends AbstractController
     public function edit(Devis $devis): Response
     {
         return $this->render('dashboard/devis/view.html.twig', [
-            'devis' => $devis
+            'devis' => $devis,
         ]);
     }
 
@@ -215,7 +215,7 @@ class DevisController extends AbstractController
 
         // envoyer un mail
         $mail->send(
-            "luxar@ht.com",
+            "no-reply@luxar.space",
             $devis->getCustomer()->getEmail(),
             'Devis ' . $devis->getChrono(),
             'dashboard/emails/devis.html.twig',
